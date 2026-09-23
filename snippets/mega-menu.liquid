@@ -9,48 +9,70 @@
 {% enddoc %}
 
 {%- liquid
-  assign flat_count = 0
+  assign per_col = 8
+  assign flat_idx = ''
   for child in link.links
     if child.links.size == 0
-      assign flat_count = flat_count | plus: 1
+      assign flat_idx = flat_idx | append: forloop.index0 | append: ','
     endif
   endfor
+  assign flat_list = flat_idx | split: ','
+  assign flat_count = flat_list.size
+  assign flat_cols = flat_count | plus: 7 | divided_by: per_col
 
   assign column_title = 'header.categories' | t
   assign promo_type = 'images'
+  assign show_intro = true
+  assign intro_text = ''
   if promo
     if promo.settings.column_title != blank
       assign column_title = promo.settings.column_title
     endif
     assign promo_type = promo.settings.promo_type
+    assign show_intro = promo.settings.show_intro
+    assign intro_text = promo.settings.intro_text
   endif
   assign col_index = 0
 -%}
 
 <div class="mega" data-mega>
-  <div class="mega__inner page-width">
+  <div class="mega__inner page-width{% if show_intro %} mega__inner--intro{% endif %}{% if promo %} mega__inner--aside{% endif %}">
+    {%- if show_intro -%}
+      <div class="mega__intro">
+        <p class="mega__intro-title">{{ link.title }}</p>
+        {%- if intro_text != blank -%}
+          <p class="mega__intro-text">{{ intro_text }}</p>
+        {%- endif -%}
+        <a href="{{ link.url }}" class="mega__intro-cta">{{ 'header.see_all' | t }} <span aria-hidden="true">›</span></a>
+      </div>
+    {%- endif -%}
+
     <div class="mega__columns">
       {%- if flat_count > 0 -%}
-        <div class="mega__col" style="--i: {{ col_index }};">
-          <p class="mega__heading">{{ column_title }}</p>
-          <ul class="mega__list{% if flat_count > 8 %} mega__list--split{% endif %}" role="list">
-            {%- for child in link.links -%}
-              {%- if child.links.size == 0 -%}
+        {%- for col in (1..flat_cols) -%}
+          {%- assign offset = forloop.index0 | times: per_col -%}
+          <div class="mega__col" style="--i: {{ col_index }};">
+            <p class="mega__heading{% unless forloop.first %} mega__heading--ghost{% endunless %}"{% unless forloop.first %} aria-hidden="true"{% endunless %}>
+              {%- if forloop.first -%}{{ column_title }}{%- else -%}&nbsp;{%- endif -%}
+            </p>
+            <ul class="mega__list" role="list">
+              {%- for idx in flat_list limit: per_col offset: offset -%}
+                {%- assign i = idx | plus: 0 -%}
+                {%- assign child = link.links[i] -%}
                 <li><a href="{{ child.url }}" class="mega__link{% if child.active %} is-active{% endif %}">{{ child.title }}</a></li>
-              {%- endif -%}
-            {%- endfor -%}
-          </ul>
-          <a href="{{ link.url }}" class="mega__all">{{ 'header.see_all' | t }} <span aria-hidden="true">›</span></a>
-        </div>
-        {%- assign col_index = col_index | plus: 1 -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+          {%- assign col_index = col_index | plus: 1 -%}
+        {%- endfor -%}
       {%- endif -%}
 
       {%- for child in link.links -%}
         {%- if child.links.size > 0 -%}
           <div class="mega__col" style="--i: {{ col_index }};">
             <a href="{{ child.url }}" class="mega__heading">{{ child.title }}</a>
-            <ul class="mega__list{% if child.links.size > 8 %} mega__list--split{% endif %}" role="list">
-              {%- for grandchild in child.links -%}
+            <ul class="mega__list" role="list">
+              {%- for grandchild in child.links limit: 12 -%}
                 <li><a href="{{ grandchild.url }}" class="mega__link{% if grandchild.active %} is-active{% endif %}">{{ grandchild.title }}</a></li>
               {%- endfor -%}
             </ul>
@@ -65,7 +87,7 @@
           <div class="mega__col" style="--i: {{ col_index }};">
             <p class="mega__heading">{{ promo.settings.extra_menu_title | default: promo.settings.extra_menu.title }}</p>
             <ul class="mega__list" role="list">
-              {%- for extra in promo.settings.extra_menu.links -%}
+              {%- for extra in promo.settings.extra_menu.links limit: 12 -%}
                 <li><a href="{{ extra.url }}" class="mega__link">{{ extra.title }}</a></li>
               {%- endfor -%}
             </ul>
@@ -76,7 +98,7 @@
           <div class="mega__col" style="--i: {{ col_index }};">
             <p class="mega__heading">{{ promo.settings.extra_menu_2_title | default: promo.settings.extra_menu_2.title }}</p>
             <ul class="mega__list" role="list">
-              {%- for extra in promo.settings.extra_menu_2.links -%}
+              {%- for extra in promo.settings.extra_menu_2.links limit: 12 -%}
                 <li><a href="{{ extra.url }}" class="mega__link">{{ extra.title }}</a></li>
               {%- endfor -%}
             </ul>
