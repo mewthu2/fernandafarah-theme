@@ -219,7 +219,7 @@
       "settings": {
         "heading": "Compre por categoria",
         "style": "circles",
-        "columns": 5,
+        "columns": 6,
         "margin_top": 56,
         "margin_bottom": 40
       }
