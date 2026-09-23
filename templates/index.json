@@ -65,7 +65,7 @@
       "settings": {
         "heading": "Novidades",
         "text": "",
-        "collection": "",
+        "collection": "novidades",
         "limit": 12,
         "layout": "carousel",
         "columns": 4,
