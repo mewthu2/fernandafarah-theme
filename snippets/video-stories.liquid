@@ -18,6 +18,9 @@
   assign video_list = video_urls | strip | split: ' '
   assign position = position | default: 'left'
   assign color_names = settings.card_color_option_name | downcase | split: ','
+  capture color_map
+    render 'color-map', product: product
+  endcapture
   assign poster = ''
   if product.featured_media
     assign poster = product.featured_media | image_url: width: 300
@@ -121,18 +124,10 @@
                       assign input_id = 'vs-' | append: section_id | append: '-' | append: option.position | append: '-' | append: forloop.index0
                       assign swatch_style = ''
                       if is_color
-                        if value.swatch.image
-                          assign swatch_img_url = value.swatch.image | image_url: width: 60
-                          assign swatch_style = 'background-image: url(' | append: swatch_img_url | append: ')'
-                        elsif value.swatch.color
-                          assign swatch_style = 'background-color: ' | append: value.swatch.color
-                        else
-                          capture swatch_color
-                            render 'swatch-color', name: value
-                          endcapture
-                          assign swatch_color = swatch_color | strip
-                          assign swatch_style = 'background-color: ' | append: swatch_color
-                        endif
+                        capture swatch_style
+                          render 'swatch-style', value: value, color_map: color_map
+                        endcapture
+                        assign swatch_style = swatch_style | strip
                       endif
                     -%}
                     <input

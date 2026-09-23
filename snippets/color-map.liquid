@@ -1,0 +1,65 @@
+{% doc %}
+  Builds a lookup string "|e:exact name=#hex|h:handle=#hex|" from the product color metafield
+  configured in theme settings. Accepts JSON (object or array) or plain text in the
+  format "NAME: #hex, NAME: #hex". Names are handleized so case and accents are ignored.
+
+  @param {product} product - The product
+
+  @example
+  {% capture color_map %}{% render 'color-map', product: product %}{% endcapture %}
+{% enddoc %}
+
+{%- liquid
+  assign parts = settings.color_config_metafield | strip | split: '.'
+  assign raw = ''
+  if parts.size == 2
+    assign mf = product.metafields[parts[0]][parts[1]]
+    if mf != blank
+      if mf.type == 'json'
+        assign raw = mf.value | json
+      elsif mf.type contains 'list.'
+        assign raw = mf.value | join: ','
+      else
+        assign raw = mf.value | append: ''
+      endif
+    endif
+  endif
+
+  assign map = '|'
+  if raw != blank
+    assign chunks = raw | replace: ';', ',' | newline_to_br | replace: '<br />', ',' | split: ','
+    assign prev_value = ''
+    for chunk in chunks
+      assign pieces = chunk | split: ':'
+      if pieces.size < 2
+        continue
+      endif
+      unless chunk contains '#'
+        assign prev_raw = pieces | last | split: '[' | last | split: '{' | last | remove: '"' | remove: "'" | remove: ']' | remove: '}' | strip
+        assign prev_exact = prev_raw | downcase
+        assign prev_value = prev_raw | handleize
+        continue
+      endunless
+      assign hex = pieces | last | remove: '"' | remove: "'" | remove: ']' | remove: '}' | remove: ')' | remove: '[' | remove: '{' | strip
+      assign hex = hex | slice: 0, 7
+      assign name_index = pieces.size | minus: 2
+      assign raw_name = pieces[name_index] | split: '[' | last | split: '{' | last | remove: '"' | remove: "'" | strip
+      assign exact = raw_name | downcase
+      assign name = raw_name | handleize
+      case name
+        when 'hex', 'color', 'cor', 'value', 'valor', 'codigo', 'code'
+          assign name = prev_value
+      endcase
+      assign first_char = hex | slice: 0
+      if name != blank and first_char == '#'
+        if name == prev_value
+          assign exact = prev_exact
+        endif
+        assign map = map | append: 'e:' | append: exact | append: '=' | append: hex | append: '|'
+        assign map = map | append: 'h:' | append: name | append: '=' | append: hex | append: '|'
+      endif
+    endfor
+  endif
+
+  echo map
+-%}

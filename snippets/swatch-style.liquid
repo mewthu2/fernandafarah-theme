@@ -1,0 +1,38 @@
+{% doc %}
+  Outputs the inline style for a color swatch. Priority: product color_config metafield map,
+  Shopify native swatch, then the built-in Portuguese color name map.
+
+  @param {object} value - Product option value
+  @param {string} [color_map] - Lookup string from the color-map snippet
+
+  @example
+  {% render 'swatch-style', value: value, color_map: color_map %}
+{% enddoc %}
+
+{%- liquid
+  assign value_text = value | append: '' | strip
+  assign exact_needle = value_text | downcase | prepend: '|e:' | append: '='
+  assign handle_needle = value_text | handleize | prepend: '|h:' | append: '='
+  assign hex = ''
+  if color_map contains exact_needle
+    assign found = color_map | split: exact_needle
+    assign hex = found[1] | split: '|' | first
+  elsif color_map contains handle_needle
+    assign found = color_map | split: handle_needle
+    assign hex = found[1] | split: '|' | first
+  endif
+
+  if hex != blank
+    echo 'background-color: ' | append: hex
+  elsif value.swatch.image
+    assign swatch_img_url = value.swatch.image | image_url: width: 60
+    echo 'background-image: url(' | append: swatch_img_url | append: ')'
+  elsif value.swatch.color
+    echo 'background-color: ' | append: value.swatch.color
+  else
+    capture swatch_color
+      render 'swatch-color', name: value
+    endcapture
+    echo 'background-color: ' | append: swatch_color | strip
+  endif
+-%}

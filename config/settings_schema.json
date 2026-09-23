@@ -213,6 +213,13 @@
         "info": "Separe variações por vírgula. Ex.: Cor, Color"
       },
       {
+        "type": "text",
+        "id": "color_config_metafield",
+        "label": "Metacampo com as cores (hex)",
+        "default": "custom.color_config",
+        "info": "Formato namespace.chave. Conteúdo com pares NOME: #hex. O nome é comparado com a cor da variante, sem diferenciar maiúsculas e acentos."
+      },
+      {
         "type": "checkbox",
         "id": "card_show_quick_add",
         "label": "Mostrar compra rápida de tamanhos",

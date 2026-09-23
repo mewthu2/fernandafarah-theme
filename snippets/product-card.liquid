@@ -39,6 +39,9 @@
   endfor
 
   assign first_variant = product.selected_or_first_available_variant
+  capture color_map
+    render 'color-map', product: product
+  endcapture
   assign is_new = false
   if settings.new_tag != blank
     assign new_tag = settings.new_tag | downcase
@@ -163,18 +166,10 @@
       <ul class="card__swatches" aria-label="{{ color_option.name | escape }}">
         {%- for value in color_option.values limit: 6 -%}
           {%- liquid
-            if value.swatch.image
-              assign swatch_img_url = value.swatch.image | image_url: width: 40
-              assign swatch_style = 'background-image: url(' | append: swatch_img_url | append: ')'
-            elsif value.swatch.color
-              assign swatch_style = 'background-color: ' | append: value.swatch.color
-            else
-              capture swatch_color
-                render 'swatch-color', name: value
-              endcapture
-              assign swatch_color = swatch_color | strip
-              assign swatch_style = 'background-color: ' | append: swatch_color
-            endif
+            capture swatch_style
+              render 'swatch-style', value: value, color_map: color_map
+            endcapture
+            assign swatch_style = swatch_style | strip
             assign swatch_image = ''
             if value.variant.featured_media
               assign swatch_image = value.variant.featured_media | image_url: width: 900

@@ -3,6 +3,9 @@
   assign color_names = settings.card_color_option_name | downcase | split: ','
   assign featured_media_id = current_variant.featured_media.id | default: product.featured_media.id
   assign guide_shown = false
+  capture color_map
+    render 'color-map', product: product
+  endcapture
 
   assign video_value = nil
   assign video_url = nil
@@ -166,18 +169,10 @@
                           assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0
                           assign swatch_style = ''
                           if is_color
-                            if value.swatch.image
-                              assign swatch_img_url = value.swatch.image | image_url: width: 60
-                              assign swatch_style = 'background-image: url(' | append: swatch_img_url | append: ')'
-                            elsif value.swatch.color
-                              assign swatch_style = 'background-color: ' | append: value.swatch.color
-                            else
-                              capture swatch_color
-                                render 'swatch-color', name: value
-                              endcapture
-                              assign swatch_color = swatch_color | strip
-                              assign swatch_style = 'background-color: ' | append: swatch_color
-                            endif
+                            capture swatch_style
+                              render 'swatch-style', value: value, color_map: color_map
+                            endcapture
+                            assign swatch_style = swatch_style | strip
                           endif
                         -%}
                         <input
