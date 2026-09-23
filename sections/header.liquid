@@ -92,37 +92,7 @@
               {{- link.title -}}
             </a>
             {%- if has_panel -%}
-              <div class="mega" data-mega>
-                <div class="mega__inner page-width">
-                  <div class="mega__columns">
-                    {%- for child in link.links -%}
-                      <div class="mega__col">
-                        <a href="{{ child.url }}" class="mega__heading">{{ child.title }}</a>
-                        {%- if child.links.size > 0 -%}
-                          <ul role="list">
-                            {%- for grandchild in child.links -%}
-                              <li><a href="{{ grandchild.url }}" class="mega__link">{{ grandchild.title }}</a></li>
-                            {%- endfor -%}
-                          </ul>
-                          <a href="{{ child.url }}" class="mega__all">{{ 'header.see_all' | t }}</a>
-                        {%- endif -%}
-                      </div>
-                    {%- endfor -%}
-                  </div>
-                  {%- if promo -%}
-                    <a href="{{ promo.settings.link | default: link.url }}" class="mega__promo" {{ promo.shopify_attributes }}>
-                      {%- if promo.settings.image != blank -%}
-                        {{ promo.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '300px', widths: '300, 450, 600', class: 'mega__promo-img' }}
-                      {%- else -%}
-                        {{ 'lifestyle-1' | placeholder_svg_tag: 'mega__promo-img placeholder' }}
-                      {%- endif -%}
-                      {%- if promo.settings.caption != blank -%}
-                        <span class="mega__promo-caption">{{ promo.settings.caption }}</span>
-                      {%- endif -%}
-                    </a>
-                  {%- endif -%}
-                </div>
-              </div>
+              {% render 'mega-menu', link: link, promo: promo %}
             {%- endif -%}
           </li>
         {%- endfor -%}
@@ -255,7 +225,7 @@
   "blocks": [
     {
       "type": "promo",
-      "name": "Imagem do mega menu",
+      "name": "Mega menu",
       "settings": [
         {
           "type": "text",
@@ -265,20 +235,113 @@
           "default": "NOVIDADES"
         },
         {
+          "type": "text",
+          "id": "column_title",
+          "label": "Título da coluna de categorias",
+          "info": "Usado quando os subitens não têm um terceiro nível.",
+          "default": "Categorias"
+        },
+        {
+          "type": "header",
+          "content": "Colunas extras"
+        },
+        {
+          "type": "link_list",
+          "id": "extra_menu",
+          "label": "Menu extra 1",
+          "info": "Ex.: Linhas, Coleções, Destaques"
+        },
+        {
+          "type": "text",
+          "id": "extra_menu_title",
+          "label": "Título do menu extra 1"
+        },
+        {
+          "type": "link_list",
+          "id": "extra_menu_2",
+          "label": "Menu extra 2"
+        },
+        {
+          "type": "text",
+          "id": "extra_menu_2_title",
+          "label": "Título do menu extra 2"
+        },
+        {
+          "type": "header",
+          "content": "Destaque à direita"
+        },
+        {
+          "type": "select",
+          "id": "promo_type",
+          "label": "Tipo de destaque",
+          "options": [
+            { "value": "images", "label": "Imagens de campanha" },
+            { "value": "products", "label": "Produtos de uma coleção" }
+          ],
+          "default": "images"
+        },
+        {
           "type": "image_picker",
           "id": "image",
-          "label": "Imagem"
+          "label": "Imagem 1"
         },
         {
           "type": "text",
           "id": "caption",
-          "label": "Legenda",
+          "label": "Legenda 1",
           "default": "Nova coleção"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Texto do link 1",
+          "default": "Shop now"
         },
         {
           "type": "url",
           "id": "link",
-          "label": "Link"
+          "label": "Link 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Imagem 2"
+        },
+        {
+          "type": "text",
+          "id": "caption_2",
+          "label": "Legenda 2"
+        },
+        {
+          "type": "text",
+          "id": "button_label_2",
+          "label": "Texto do link 2",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link_2",
+          "label": "Link 2"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Coleção (tipo Produtos)"
+        },
+        {
+          "type": "text",
+          "id": "products_title",
+          "label": "Título dos produtos",
+          "default": "Mais desejados"
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "label": "Quantidade de produtos",
+          "min": 2,
+          "max": 4,
+          "step": 1,
+          "default": 3
         }
       ]
     }

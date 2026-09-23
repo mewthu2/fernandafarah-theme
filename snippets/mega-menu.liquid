@@ -1,0 +1,168 @@
+{% doc %}
+  Renders the desktop mega menu panel for a top-level menu link.
+
+  @param {link} link - Top-level menu link
+  @param {block} [promo] - Header "Mega menu" block matched to this link
+
+  @example
+  {% render 'mega-menu', link: link, promo: promo %}
+{% enddoc %}
+
+{%- liquid
+  assign flat_count = 0
+  for child in link.links
+    if child.links.size == 0
+      assign flat_count = flat_count | plus: 1
+    endif
+  endfor
+
+  assign column_title = 'header.categories' | t
+  assign promo_type = 'images'
+  if promo
+    if promo.settings.column_title != blank
+      assign column_title = promo.settings.column_title
+    endif
+    assign promo_type = promo.settings.promo_type
+  endif
+  assign col_index = 0
+-%}
+
+<div class="mega" data-mega>
+  <div class="mega__inner page-width">
+    <div class="mega__columns">
+      {%- if flat_count > 0 -%}
+        <div class="mega__col" style="--i: {{ col_index }};">
+          <p class="mega__heading">{{ column_title }}</p>
+          <ul class="mega__list{% if flat_count > 8 %} mega__list--split{% endif %}" role="list">
+            {%- for child in link.links -%}
+              {%- if child.links.size == 0 -%}
+                <li><a href="{{ child.url }}" class="mega__link{% if child.active %} is-active{% endif %}">{{ child.title }}</a></li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+          <a href="{{ link.url }}" class="mega__all">{{ 'header.see_all' | t }} <span aria-hidden="true">›</span></a>
+        </div>
+        {%- assign col_index = col_index | plus: 1 -%}
+      {%- endif -%}
+
+      {%- for child in link.links -%}
+        {%- if child.links.size > 0 -%}
+          <div class="mega__col" style="--i: {{ col_index }};">
+            <a href="{{ child.url }}" class="mega__heading">{{ child.title }}</a>
+            <ul class="mega__list{% if child.links.size > 8 %} mega__list--split{% endif %}" role="list">
+              {%- for grandchild in child.links -%}
+                <li><a href="{{ grandchild.url }}" class="mega__link{% if grandchild.active %} is-active{% endif %}">{{ grandchild.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+            <a href="{{ child.url }}" class="mega__all">{{ 'header.see_all' | t }} <span aria-hidden="true">›</span></a>
+          </div>
+          {%- assign col_index = col_index | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if promo -%}
+        {%- if promo.settings.extra_menu != blank -%}
+          <div class="mega__col" style="--i: {{ col_index }};">
+            <p class="mega__heading">{{ promo.settings.extra_menu_title | default: promo.settings.extra_menu.title }}</p>
+            <ul class="mega__list" role="list">
+              {%- for extra in promo.settings.extra_menu.links -%}
+                <li><a href="{{ extra.url }}" class="mega__link">{{ extra.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+          {%- assign col_index = col_index | plus: 1 -%}
+        {%- endif -%}
+        {%- if promo.settings.extra_menu_2 != blank -%}
+          <div class="mega__col" style="--i: {{ col_index }};">
+            <p class="mega__heading">{{ promo.settings.extra_menu_2_title | default: promo.settings.extra_menu_2.title }}</p>
+            <ul class="mega__list" role="list">
+              {%- for extra in promo.settings.extra_menu_2.links -%}
+                <li><a href="{{ extra.url }}" class="mega__link">{{ extra.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    {%- if promo -%}
+      <div class="mega__aside mega__aside--{{ promo_type }}" {{ promo.shopify_attributes }}>
+        {%- if promo_type == 'products' -%}
+          {%- assign promo_collection = promo.settings.collection -%}
+          <div class="mega__aside-head">
+            <p class="mega__heading">{{ promo.settings.products_title | default: promo_collection.title }}</p>
+            {%- if promo_collection != blank -%}
+              <a href="{{ promo_collection.url }}" class="mega__all">{{ 'header.see_all' | t }} <span aria-hidden="true">›</span></a>
+            {%- endif -%}
+          </div>
+          <ul class="mega__products" role="list">
+            {%- if promo_collection != blank and promo_collection.products_count > 0 -%}
+              {%- for product in promo_collection.products limit: promo.settings.products_count -%}
+                <li>
+                  <a href="{{ product.url }}" class="mega__product">
+                    <div class="mega__product-media">
+                      {%- if product.featured_media -%}
+                        {{ product.featured_media | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '160px', widths: '200, 300, 400', class: 'mega__product-img', alt: product.featured_media.alt }}
+                      {%- else -%}
+                        {{ 'product-apparel-1' | placeholder_svg_tag: 'mega__product-img placeholder' }}
+                      {%- endif -%}
+                    </div>
+                    <span class="mega__product-title">{{ product.title | escape }}</span>
+                    {% render 'price', product: product %}
+                  </a>
+                </li>
+              {%- endfor -%}
+            {%- else -%}
+              {%- for i in (1..3) -%}
+                <li>
+                  <div class="mega__product">
+                    <div class="mega__product-media">{{ 'product-apparel-1' | placeholder_svg_tag: 'mega__product-img placeholder' }}</div>
+                    <span class="mega__product-title">{{ 'general.product_placeholder' | t }}</span>
+                  </div>
+                </li>
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        {%- else -%}
+          {%- for n in (1..2) -%}
+            {%- liquid
+              if n == 1
+                assign p_image = promo.settings.image
+                assign p_caption = promo.settings.caption
+                assign p_link = promo.settings.link | default: link.url
+                assign p_cta = promo.settings.button_label
+                assign p_show = true
+              else
+                assign p_image = promo.settings.image_2
+                assign p_caption = promo.settings.caption_2
+                assign p_link = promo.settings.link_2 | default: link.url
+                assign p_cta = promo.settings.button_label_2
+                assign p_show = false
+                if p_image != blank or p_caption != blank
+                  assign p_show = true
+                endif
+              endif
+            -%}
+            {%- if p_show -%}
+              <a href="{{ p_link }}" class="mega__promo">
+                <div class="mega__promo-media">
+                  {%- if p_image != blank -%}
+                    {{ p_image | image_url: width: 700 | image_tag: loading: 'lazy', sizes: '260px', widths: '300, 500, 700', class: 'mega__promo-img' }}
+                  {%- else -%}
+                    {{ 'lifestyle-1' | placeholder_svg_tag: 'mega__promo-img placeholder' }}
+                  {%- endif -%}
+                </div>
+                {%- if p_caption != blank -%}
+                  <span class="mega__promo-caption">{{ p_caption }}</span>
+                {%- endif -%}
+                {%- if p_cta != blank -%}
+                  <span class="mega__promo-cta">{{ p_cta }}</span>
+                {%- endif -%}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
