@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "footer",
   "name": "Rodapé",
@@ -5,8 +14,20 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "menu1": { "type": "menu", "settings": { "title": "Institucional", "menu": "footer" } },
-        "menu2": { "type": "menu", "settings": { "title": "Ajuda", "menu": "footer" } },
+        "menu1": {
+          "type": "menu",
+          "settings": {
+            "title": "Institucional",
+            "menu": "institucional"
+          }
+        },
+        "menu2": {
+          "type": "menu",
+          "settings": {
+            "title": "Ajuda",
+            "menu": "customer-account-main-menu"
+          }
+        },
         "text1": {
           "type": "text",
           "settings": {
@@ -15,9 +36,26 @@
           }
         }
       },
-      "block_order": ["menu1", "menu2", "text1"],
-      "settings": {}
+      "block_order": [
+        "menu1",
+        "menu2",
+        "text1"
+      ],
+      "settings": {
+        "background": "#ffffff",
+        "text_color": "#000000",
+        "show_newsletter": true,
+        "newsletter_title": "Cadastre-se em nossa newsletter",
+        "newsletter_text": "<p>Receba as novidades e fique por dentro de serviços exclusivos!</p>",
+        "newsletter_legal": "<p>Utilizamos os dados preenchidos para você usar as funcionalidades da nossa loja. Ao concluir o cadastro, você permite o tratamento de dados pessoais para a finalidade proposta.</p>",
+        "show_payment": true,
+        "payment_title": "Formas de pagamento",
+        "payment_text": "Parcelamento em até 8x sem juros",
+        "company_info": "<p>Razão social LTDA · CNPJ 00.000.000/0001-00 · Endereço</p>"
+      }
     }
   },
-  "order": ["footer"]
+  "order": [
+    "footer"
+  ]
 }

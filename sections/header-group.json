@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "Cabeçalho",
@@ -5,22 +14,55 @@
     "announcement": {
       "type": "announcement-bar",
       "blocks": {
-        "msg1": { "type": "message", "settings": { "text": "Novidades | Nova coleção", "link_text": "DESCUBRA", "link": "shopify://collections/all" } },
-        "msg2": { "type": "message", "settings": { "text": "15% OFF na 1ª compra. Cupom: WELCOME", "link_text": "SHOP NOW", "link": "shopify://collections/all" } },
-        "msg3": { "type": "message", "settings": { "text": "Frete grátis acima de R$ 500", "link_text": "", "link": "" } }
+        "msg1": {
+          "type": "message",
+          "settings": {
+            "text": "Novidades | Nova coleção",
+            "link_text": "DESCUBRA",
+            "link": "shopify://collections/all"
+          }
+        },
+        "msg2": {
+          "type": "message",
+          "settings": {
+            "text": "15% OFF na 1ª compra. Cupom: WELCOME",
+            "link_text": "SHOP NOW",
+            "link": "shopify://collections/all"
+          }
+        },
+        "msg3": {
+          "type": "message",
+          "settings": {
+            "text": "Frete grátis acima de R$ 500",
+            "link_text": "",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["msg1", "msg2", "msg3"],
-      "settings": { "background": "#000000", "text_color": "#FFFFFF", "interval": 5 }
+      "block_order": [
+        "msg1",
+        "msg2",
+        "msg3"
+      ],
+      "settings": {
+        "background": "#000000",
+        "text_color": "#ffffff",
+        "interval": 5
+      }
     },
     "header": {
       "type": "header",
       "settings": {
         "menu": "main-menu",
+        "utility_menu": "",
         "layout": "logo_left",
         "sticky": true,
         "transparent_home": true
       }
     }
   },
-  "order": ["announcement", "header"]
+  "order": [
+    "announcement",
+    "header"
+  ]
 }
