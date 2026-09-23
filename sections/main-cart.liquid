@@ -1,0 +1,48 @@
+<div class="cart-page page-width" data-cart-page>
+  <h1 class="page-title">{{ 'cart.title' | t }}</h1>
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" class="cart-page__grid" id="CartPageForm">
+      <ul class="cart-items" role="list">
+        {%- for item in cart.items -%}
+          {% render 'cart-item', item: item, index: forloop.index %}
+        {%- endfor -%}
+      </ul>
+      <aside class="cart-page__summary">
+        {%- if settings.cart_show_note -%}
+          <label for="CartNote" class="cart-page__label">{{ 'cart.note' | t }}</label>
+          <textarea id="CartNote" name="note" rows="3">{{ cart.note }}</textarea>
+        {%- endif -%}
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          <ul class="cart-discounts" role="list">
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <li>{{ discount.title | escape }} (-{{ discount.total_allocated_amount | money }})</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+        <div class="cart-total">
+          <span>{{ 'cart.subtotal' | t }}</span>
+          <span class="cart-total__value">{{ cart.total_price | money }}</span>
+        </div>
+        <p class="cart-total__note">{{ 'cart.taxes_note' | t }}</p>
+        <button type="submit" name="checkout" class="button button--full">{{ 'cart.checkout' | t }}</button>
+        {%- if additional_checkout_buttons -%}
+          <div class="cart-page__extra">{{ content_for_additional_checkout_buttons }}</div>
+        {%- endif -%}
+        <a href="{{ routes.all_products_collection_url }}" class="drawer__link">{{ 'cart.continue' | t }}</a>
+      </aside>
+    </form>
+  {%- else -%}
+    <div class="empty-state">
+      <p>{{ 'cart.empty' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="button">{{ 'cart.continue' | t }}</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Carrinho",
+  "class": "section-main-cart",
+  "settings": []
+}
+{% endschema %}

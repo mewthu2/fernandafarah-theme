@@ -1,0 +1,205 @@
+{
+  "accessibility": {
+    "skip_to_content": "Pular para o conteúdo"
+  },
+  "general": {
+    "page": "Página {{ page }}",
+    "close": "Fechar",
+    "previous": "Anterior",
+    "next": "Próximo",
+    "slide": "Ir para o slide {{ number }}",
+    "view_all": "Ver tudo",
+    "home": "Home",
+    "breadcrumbs": "Navegação estrutural",
+    "pagination": "Paginação",
+    "error": "Algo deu errado. Tente novamente.",
+    "whatsapp": "Fale conosco pelo WhatsApp",
+    "countdown": "Tempo restante",
+    "coupon": "Cupom",
+    "days": "dias",
+    "hours": "horas",
+    "minutes": "min",
+    "seconds": "seg",
+    "product_placeholder": "Nome do produto"
+  },
+  "header": {
+    "menu": "Menu",
+    "main_menu": "Menu principal",
+    "account": "Minha conta",
+    "my_account": "Minha conta",
+    "login": "Entrar / Cadastrar",
+    "see_all": "Ver tudo"
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados."
+  },
+  "newsletter": {
+    "name": "Nome",
+    "email": "E-mail",
+    "submit": "OK",
+    "success": "Obrigado por se cadastrar!"
+  },
+  "search": {
+    "title": "Buscar",
+    "placeholder": "O que você procura?",
+    "submit": "Buscar",
+    "suggestions": "Sugestões",
+    "collections": "Coleções",
+    "products": "Produtos",
+    "view_all": "Ver todos os resultados para \"{{ terms }}\"",
+    "no_results": "Nenhum resultado para \"{{ terms }}\"."
+  },
+  "products": {
+    "price": {
+      "regular": "Preço original",
+      "sale": "Preço promocional",
+      "from": "A partir de {{ price }}",
+      "installments": "ou {{ number }}x de {{ value }} sem juros",
+      "pix": "{{ price }} no Pix ({{ discount }}% OFF)"
+    },
+    "product": {
+      "add_to_cart": "Adicionar à sacola",
+      "added": "Adicionado à sacola",
+      "sold_out": "Esgotado",
+      "unavailable": "Indisponível",
+      "new": "Novo",
+      "quick_add": "Adicionar tamanho",
+      "size_guide": "Guia de medidas",
+      "sku": "Ref",
+      "zoom": "Ampliar imagem"
+    }
+  },
+  "collections": {
+    "count": "{{ number }} produtos",
+    "filter": "Filtrar",
+    "sort_by": "Ordenar por",
+    "grid": "Colunas",
+    "clear_all": "Limpar filtros",
+    "apply": "Aplicar",
+    "from": "De",
+    "to": "Até",
+    "empty": "Nenhum produto encontrado.",
+    "load_more": "Carregar mais",
+    "showing": "Você viu {{ shown }} de {{ total }} produtos",
+    "all_collections": "Coleções"
+  },
+  "cart": {
+    "title": "Sacola",
+    "empty": "Sua sacola está vazia.",
+    "continue": "Continuar comprando",
+    "subtotal": "Subtotal",
+    "taxes_note": "Frete e descontos calculados no checkout.",
+    "checkout": "Finalizar compra",
+    "view_cart": "Ver sacola",
+    "remove": "Remover",
+    "quantity": "Quantidade",
+    "increase": "Aumentar quantidade",
+    "decrease": "Diminuir quantidade",
+    "note": "Observações do pedido",
+    "free_shipping_remaining": "Faltam {{ amount }} para ganhar frete grátis",
+    "free_shipping_reached": "Parabéns! Você ganhou frete grátis"
+  },
+  "contact": {
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "message": "Mensagem",
+    "send": "Enviar",
+    "success": "Obrigado! Responderemos em breve."
+  },
+  "blog": {
+    "back": "Voltar ao blog"
+  },
+  "templates": {
+    "404": {
+      "title": "Página não encontrada",
+      "text": "A página que você procura não existe ou foi removida."
+    }
+  },
+  "password": {
+    "enter": "Entrar com senha",
+    "password": "Senha",
+    "submit": "Entrar"
+  },
+  "gift_card": {
+    "title": "Seu vale-presente",
+    "expired": "Este vale-presente expirou ou está desativado",
+    "initial": "Valor inicial",
+    "expires": "Válido até"
+  },
+  "customer": {
+    "email": "E-mail",
+    "password": "Senha",
+    "password_confirm": "Confirmar senha",
+    "first_name": "Nome",
+    "last_name": "Sobrenome",
+    "login": {
+      "title": "Entrar",
+      "submit": "Entrar",
+      "forgot": "Esqueceu sua senha?",
+      "new": "Ainda não tem conta?",
+      "guest": "Continuar como convidado"
+    },
+    "recover": {
+      "title": "Redefinir senha",
+      "submit": "Enviar",
+      "success": "Enviamos um e-mail com o link para redefinir sua senha."
+    },
+    "register": {
+      "title": "Criar conta",
+      "submit": "Cadastrar",
+      "marketing": "Quero receber novidades e ofertas por e-mail",
+      "have_account": "Já tem conta?"
+    },
+    "account": {
+      "title": "Minha conta",
+      "logout": "Sair",
+      "orders": "Meus pedidos",
+      "no_orders": "Você ainda não fez nenhum pedido.",
+      "details": "Meus dados",
+      "addresses": "Endereços"
+    },
+    "order": {
+      "title": "Pedido {{ name }}",
+      "back": "Voltar para minha conta",
+      "number": "Pedido",
+      "date": "Data",
+      "payment": "Pagamento",
+      "fulfillment": "Entrega",
+      "total": "Total",
+      "product": "Produto",
+      "quantity": "Qtd.",
+      "billing": "Endereço de cobrança",
+      "shipping": "Endereço de entrega",
+      "cancelled": "Pedido cancelado",
+      "track": "Rastrear"
+    },
+    "addresses": {
+      "default": "Endereço padrão",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "add": "Adicionar endereço",
+      "save": "Salvar endereço",
+      "set_default": "Definir como padrão",
+      "zip": "CEP",
+      "address1": "Endereço e número",
+      "address2": "Complemento",
+      "city": "Cidade",
+      "province": "Estado",
+      "country": "País"
+    },
+    "activate": {
+      "title": "Ativar conta",
+      "submit": "Ativar",
+      "decline": "Recusar convite"
+    },
+    "reset": {
+      "title": "Nova senha",
+      "submit": "Salvar senha"
+    }
+  },
+  "date_formats": {
+    "date": "%d/%m/%Y",
+    "date_at_time": "%d/%m/%Y às %H:%M"
+  }
+}

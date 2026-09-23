@@ -1,0 +1,315 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Fernanda Farah",
+    "theme_version": "1.0.0",
+    "theme_author": "Fernanda Farah",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://help.shopify.com/"
+  },
+  {
+    "name": "Logo e favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_inverse",
+        "label": "Logo claro (sobre banners)",
+        "info": "Usado quando o cabeçalho fica transparente sobre o banner da home."
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Largura do logo",
+        "min": 60,
+        "max": 300,
+        "step": 5,
+        "unit": "px",
+        "default": 120
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "32 x 32px .png"
+      }
+    ]
+  },
+  {
+    "name": "Cores",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Fundo",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Texto",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Texto secundário",
+        "default": "#6F6F6F"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Bordas",
+        "default": "#E3E3E3"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Fundo alternativo",
+        "default": "#F5F3F1"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Destaque",
+        "default": "#AB846E"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Preço promocional",
+        "default": "#54030F"
+      },
+      {
+        "type": "color",
+        "id": "color_button",
+        "label": "Botão principal",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "color_button_text",
+        "label": "Texto do botão principal",
+        "default": "#FFFFFF"
+      }
+    ]
+  },
+  {
+    "name": "Tipografia",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Fonte de títulos",
+        "default": "cormorant_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Fonte do texto",
+        "default": "montserrat_n4"
+      },
+      {
+        "type": "range",
+        "id": "font_body_scale",
+        "label": "Tamanho do texto",
+        "min": 80,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "range",
+        "id": "font_heading_scale",
+        "label": "Tamanho dos títulos",
+        "min": 80,
+        "max": 150,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "checkbox",
+        "id": "heading_uppercase",
+        "label": "Títulos em caixa alta",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "label": "Largura máxima da página",
+        "min": 1000,
+        "max": 2000,
+        "step": 20,
+        "unit": "px",
+        "default": 1600
+      },
+      {
+        "type": "range",
+        "id": "button_radius",
+        "label": "Arredondamento dos botões",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "px",
+        "default": 0
+      }
+    ]
+  },
+  {
+    "name": "Cards de produto",
+    "settings": [
+      {
+        "type": "select",
+        "id": "card_image_ratio",
+        "label": "Proporção da imagem",
+        "options": [
+          { "value": "portrait", "label": "Retrato (2:3)" },
+          { "value": "tall", "label": "Retrato alto (3:4)" },
+          { "value": "square", "label": "Quadrado" },
+          { "value": "adapt", "label": "Original" }
+        ],
+        "default": "portrait"
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_second_image",
+        "label": "Mostrar segunda imagem ao passar o mouse",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_swatches",
+        "label": "Mostrar cores",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "card_color_option_name",
+        "label": "Nome da opção de cor",
+        "default": "Cor",
+        "info": "Separe variações por vírgula. Ex.: Cor, Color"
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_quick_add",
+        "label": "Mostrar compra rápida de tamanhos",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "new_tag",
+        "label": "Tag para selo \"Novo\"",
+        "default": "novo"
+      }
+    ]
+  },
+  {
+    "name": "Preços e parcelamento",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_installments",
+        "label": "Mostrar parcelamento",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "installments_max",
+        "label": "Número máximo de parcelas",
+        "min": 2,
+        "max": 12,
+        "step": 1,
+        "default": 8
+      },
+      {
+        "type": "number",
+        "id": "installments_min_value",
+        "label": "Valor mínimo da parcela (R$)",
+        "default": 100
+      },
+      {
+        "type": "checkbox",
+        "id": "show_pix",
+        "label": "Mostrar preço no Pix",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "pix_discount",
+        "label": "Desconto no Pix",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "unit": "%",
+        "default": 5
+      },
+      {
+        "type": "checkbox",
+        "id": "show_discount_badge",
+        "label": "Mostrar selo de % OFF",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Carrinho",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Tipo de carrinho",
+        "options": [
+          { "value": "drawer", "label": "Sacola lateral" },
+          { "value": "page", "label": "Página" }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Frete grátis a partir de (R$)",
+        "info": "Deixe 0 para ocultar a barra de frete grátis.",
+        "default": 500
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_note",
+        "label": "Permitir observação no pedido",
+        "default": false
+      },
+      {
+        "type": "collection",
+        "id": "cart_empty_collection",
+        "label": "Coleção sugerida no carrinho vazio"
+      }
+    ]
+  },
+  {
+    "name": "Redes sociais",
+    "settings": [
+      { "type": "text", "id": "social_instagram", "label": "Instagram", "placeholder": "https://instagram.com/" },
+      { "type": "text", "id": "social_facebook", "label": "Facebook", "placeholder": "https://facebook.com/" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok", "placeholder": "https://tiktok.com/@" },
+      { "type": "text", "id": "social_pinterest", "label": "Pinterest", "placeholder": "https://pinterest.com/" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube", "placeholder": "https://youtube.com/" },
+      { "type": "text", "id": "social_spotify", "label": "Spotify", "placeholder": "https://open.spotify.com/" },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp (botão flutuante)",
+        "info": "Com DDI e DDD. Ex.: 5511999999999. Deixe vazio para ocultar."
+      }
+    ]
+  }
+]

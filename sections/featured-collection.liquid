@@ -1,0 +1,75 @@
+{%- assign collection = section.settings.collection -%}
+
+<div class="shelf section-spacing" style="--banner-mt: {{ section.settings.margin_top }}px; --banner-mb: {{ section.settings.margin_bottom }}px; --shelf-cols: {{ section.settings.columns }};">
+  <div class="shelf__header page-width">
+    <div>
+      {%- if section.settings.heading != blank -%}
+        <h2 class="section-title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="section-text">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </div>
+    <div class="shelf__actions">
+      {%- if section.settings.show_view_all and collection != blank -%}
+        <a href="{{ collection.url }}" class="link-underline">{{ 'general.view_all' | t }}</a>
+      {%- endif -%}
+      {%- if section.settings.layout == 'carousel' -%}
+        <button type="button" class="icon-btn" data-scroll-prev aria-label="{{ 'general.previous' | t }}">{% render 'icon', icon: 'arrow-left' %}</button>
+        <button type="button" class="icon-btn" data-scroll-next aria-label="{{ 'general.next' | t }}">{% render 'icon', icon: 'arrow-right' %}</button>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="shelf__body{% if section.settings.layout == 'grid' %} page-width{% endif %}">
+    <ul class="{% if section.settings.layout == 'carousel' %}product-scroller{% else %}product-grid{% endif %}" role="list" data-scroller>
+      {%- if collection != blank and collection.products_count > 0 -%}
+        {%- for product in collection.products limit: section.settings.limit -%}
+          <li>{% render 'product-card', product: product, sizes: '(min-width: 990px) 25vw, 50vw' %}</li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..4) -%}
+          <li>
+            <article class="card">
+              <div class="card__media">{{ 'product-apparel-1' | placeholder_svg_tag: 'card__img placeholder' }}</div>
+              <div class="card__info">
+                <h3 class="card__title">{{ 'general.product_placeholder' | t }}</h3>
+                <div class="price"><span class="price__current">R$ 0,00</span></div>
+              </div>
+            </article>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Vitrine de produtos",
+  "class": "section-shelf",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Novidades" },
+    { "type": "richtext", "id": "text", "label": "Texto" },
+    { "type": "collection", "id": "collection", "label": "Coleção" },
+    { "type": "range", "id": "limit", "label": "Quantidade de produtos", "min": 2, "max": 24, "step": 1, "default": 12 },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "carousel", "label": "Carrossel" },
+        { "value": "grid", "label": "Grade" }
+      ],
+      "default": "carousel"
+    },
+    { "type": "range", "id": "columns", "label": "Produtos por linha (desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_view_all", "label": "Mostrar \"Ver tudo\"", "default": true },
+    { "type": "range", "id": "margin_top", "label": "Espaço acima", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "margin_bottom", "label": "Espaço abaixo", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "presets": [
+    { "name": "Vitrine de produtos" }
+  ]
+}
+{% endschema %}

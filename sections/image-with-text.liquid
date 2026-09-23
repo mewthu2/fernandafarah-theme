@@ -1,0 +1,46 @@
+<div class="iwt section-spacing{% if section.settings.image_right %} iwt--reverse{% endif %}" style="--banner-mt: {{ section.settings.margin_top }}px; --banner-mb: {{ section.settings.margin_bottom }}px; background: {{ section.settings.background }};">
+  <div class="iwt__media">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 50vw, 100vw', widths: '600, 900, 1200, 1600', class: 'iwt__img' }}
+    {%- else -%}
+      {{ 'lifestyle-2' | placeholder_svg_tag: 'iwt__img placeholder' }}
+    {%- endif -%}
+  </div>
+  <div class="iwt__content text-{{ section.settings.alignment }}">
+    {%- if section.settings.subheading != blank -%}
+      <p class="eyebrow">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="heading-lg">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      <div class="rte">{{ section.settings.text }}</div>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a href="{{ section.settings.link | default: '#' }}" class="button button--outline">{{ section.settings.button_label }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Imagem com texto",
+  "class": "section-iwt",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Imagem" },
+    { "type": "checkbox", "id": "image_right", "label": "Imagem à direita", "default": false },
+    { "type": "text", "id": "subheading", "label": "Subtítulo", "default": "Nossa essência" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Feito para durar" },
+    { "type": "richtext", "id": "text", "label": "Texto", "default": "<p>Peças pensadas para atravessar estações, com matérias-primas nobres e acabamento impecável.</p>" },
+    { "type": "text", "id": "button_label", "label": "Texto do botão", "default": "Saiba mais" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "text_alignment", "id": "alignment", "label": "Alinhamento", "default": "left" },
+    { "type": "color", "id": "background", "label": "Cor de fundo", "default": "#F5F3F1" },
+    { "type": "range", "id": "margin_top", "label": "Espaço acima", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "label": "Espaço abaixo", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 20 }
+  ],
+  "presets": [
+    { "name": "Imagem com texto" }
+  ]
+}
+{% endschema %}

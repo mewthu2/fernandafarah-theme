@@ -1,0 +1,16 @@
+<div class="spacer" style="--spacer-d: {{ section.settings.desktop }}px; --spacer-m: {{ section.settings.mobile }}px; background: {{ section.settings.background }};"></div>
+
+{% schema %}
+{
+  "name": "Espaçador",
+  "class": "section-spacer",
+  "settings": [
+    { "type": "range", "id": "desktop", "label": "Altura desktop", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 20 },
+    { "type": "range", "id": "mobile", "label": "Altura mobile", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 20 },
+    { "type": "color", "id": "background", "label": "Cor de fundo", "default": "#FFFFFF" }
+  ],
+  "presets": [
+    { "name": "Espaçador" }
+  ]
+}
+{% endschema %}

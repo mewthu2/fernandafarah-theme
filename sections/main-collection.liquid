@@ -1,0 +1,67 @@
+<div class="collection" data-collection style="--grid-cols-desktop: {{ section.settings.columns }};">
+  {%- if section.settings.show_banner and collection.image -%}
+    <div class="collection__banner">
+      {{ collection.image | image_url: width: 2400 | image_tag: loading: 'eager', sizes: '100vw', widths: '750, 1100, 1500, 1920, 2400', class: 'collection__banner-img' }}
+    </div>
+  {%- endif -%}
+
+  <div class="collection__header page-width">
+    {%- render 'breadcrumbs' -%}
+    <h1 class="collection__title">{{ collection.title | escape }}</h1>
+    {%- if section.settings.show_description and collection.description != blank -%}
+      <div class="collection__desc rte">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+
+  {%- paginate collection.products by section.settings.per_page -%}
+    {%- if section.settings.enable_filters -%}
+      {% render 'facets', results: collection, count: collection.products_count %}
+    {%- endif -%}
+
+    <div class="page-width-wide">
+      {%- if collection.products.size > 0 -%}
+        <ul class="product-grid product-grid--collection" role="list" data-product-grid>
+          {%- for product in collection.products -%}
+            <li>
+              {%- if forloop.index <= 4 -%}
+                {% render 'product-card', product: product, lazy: false %}
+              {%- else -%}
+                {% render 'product-card', product: product %}
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+        {% render 'pagination', paginate: paginate, style: section.settings.pagination %}
+      {%- else -%}
+        <div class="empty-state">
+          <p>{{ 'collections.empty' | t }}</p>
+          <a class="button button--outline" href="{{ collection.url }}">{{ 'collections.clear_all' | t }}</a>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Coleção",
+  "class": "section-main-collection",
+  "settings": [
+    { "type": "checkbox", "id": "show_banner", "label": "Mostrar imagem da coleção", "default": false },
+    { "type": "checkbox", "id": "show_description", "label": "Mostrar descrição", "default": true },
+    { "type": "checkbox", "id": "enable_filters", "label": "Mostrar filtros e ordenação", "default": true, "info": "Configure os filtros no app Search & Discovery." },
+    { "type": "range", "id": "per_page", "label": "Produtos por página", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns", "label": "Colunas (desktop)", "min": 2, "max": 5, "step": 1, "default": 4 },
+    {
+      "type": "select",
+      "id": "pagination",
+      "label": "Paginação",
+      "options": [
+        { "value": "load_more", "label": "Botão \"Carregar mais\"" },
+        { "value": "numbers", "label": "Números" }
+      ],
+      "default": "load_more"
+    }
+  ]
+}
+{% endschema %}

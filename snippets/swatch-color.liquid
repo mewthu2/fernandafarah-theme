@@ -1,0 +1,36 @@
+{% doc %}
+  Outputs a CSS color for a color option name, mapping common Portuguese color names.
+
+  @param {string} name - Color option value
+
+  @example
+  {% render 'swatch-color', name: 'Preto' %}
+{% enddoc %}
+
+{%- assign key = name | downcase | handleize -%}
+{%- case key -%}
+  {%- when 'preto', 'black' -%}#111111
+  {%- when 'branco', 'white' -%}#ffffff
+  {%- when 'off-white', 'offwhite', 'marfim', 'creme', 'cru' -%}#f3eee4
+  {%- when 'bege', 'areia', 'nude' -%}#d9c3a5
+  {%- when 'caramelo', 'camel', 'caqui', 'kaki' -%}#b5834c
+  {%- when 'marrom', 'chocolate', 'cafe', 'cafe-1' -%}#5e3d27
+  {%- when 'cinza', 'grafite', 'mescla' -%}#8a8a8a
+  {%- when 'azul', 'azul-marinho', 'marinho', 'navy' -%}#1f2f55
+  {%- when 'azul-claro', 'celeste' -%}#9fc0dd
+  {%- when 'jeans', 'denim' -%}#4a6b93
+  {%- when 'verde', 'verde-militar', 'oliva' -%}#4d5a36
+  {%- when 'verde-claro', 'menta' -%}#b4d6c0
+  {%- when 'vermelho', 'red' -%}#a31d1d
+  {%- when 'vinho', 'bordo', 'bordeaux' -%}#5b1a26
+  {%- when 'rosa', 'pink' -%}#e6a8b8
+  {%- when 'rosa-claro', 'rose' -%}#f2d3d8
+  {%- when 'lilas', 'lavanda' -%}#c8b6db
+  {%- when 'roxo', 'uva' -%}#5a2d6b
+  {%- when 'amarelo', 'mostarda' -%}#e2b93b
+  {%- when 'laranja', 'terracota', 'ferrugem' -%}#c0602f
+  {%- when 'dourado', 'ouro', 'gold' -%}#c9a44c
+  {%- when 'prata', 'silver' -%}#c0c0c0
+  {%- when 'estampado', 'print', 'animal-print', 'onca' -%}#b08f6a
+  {%- else -%}{{ name | downcase | remove: ' ' }}
+{%- endcase -%}

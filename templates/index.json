@@ -1,0 +1,140 @@
+{
+  "sections": {
+    "hero": {
+      "type": "slideshow",
+      "blocks": {
+        "slide1": {
+          "type": "slide",
+          "settings": {
+            "heading": "Galeria Botânica",
+            "subheading": "Nova coleção",
+            "button_label": "DESCUBRA",
+            "link": "shopify://collections/all",
+            "button_style": "outline-light",
+            "text_color": "#FFFFFF",
+            "position": "middle-right",
+            "position_mobile": "bottom",
+            "alignment": "center"
+          }
+        },
+        "slide2": {
+          "type": "slide",
+          "settings": {
+            "heading": "Sale",
+            "subheading": "Até 50% OFF",
+            "button_label": "COMPRE AGORA",
+            "link": "shopify://collections/all",
+            "button_style": "outline-light",
+            "text_color": "#FFFFFF",
+            "position": "middle-left",
+            "position_mobile": "bottom",
+            "alignment": "center"
+          }
+        }
+      },
+      "block_order": ["slide1", "slide2"],
+      "settings": {
+        "height": "full",
+        "autoplay": true,
+        "interval": 6,
+        "accessibility_label": "Destaques"
+      }
+    },
+    "shelf_new": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Novidades",
+        "layout": "carousel",
+        "limit": 12,
+        "columns": 4,
+        "show_view_all": true,
+        "margin_top": 48,
+        "margin_bottom": 48
+      }
+    },
+    "banner_main": {
+      "type": "image-banner",
+      "settings": {
+        "heading": "Detalhes",
+        "button_label": "SHOP NOW",
+        "link": "shopify://collections/all",
+        "position": "bottom-center",
+        "width": "full",
+        "margin_top": 0,
+        "margin_bottom": 4
+      }
+    },
+    "duo": {
+      "type": "banner-grid",
+      "blocks": {
+        "b1": { "type": "banner", "settings": { "heading": "Conjuntos", "button_label": "Shop now", "link": "shopify://collections/all" } },
+        "b2": { "type": "banner", "settings": { "heading": "Fluidez", "button_label": "Shop now", "link": "shopify://collections/all" } }
+      },
+      "block_order": ["b1", "b2"],
+      "settings": {
+        "columns": 2,
+        "ratio": "portrait",
+        "text_position": "inside",
+        "full_width": true,
+        "gap": 4,
+        "margin_top": 0,
+        "margin_bottom": 4
+      }
+    },
+    "banner_texturas": {
+      "type": "image-banner",
+      "settings": {
+        "heading": "Texturas",
+        "button_label": "SHOP NOW",
+        "link": "shopify://collections/all",
+        "position": "middle-left",
+        "width": "full",
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "categories": {
+      "type": "collection-list",
+      "blocks": {
+        "c1": { "type": "collection", "settings": { "title": "Vestidos" } },
+        "c2": { "type": "collection", "settings": { "title": "Blusas" } },
+        "c3": { "type": "collection", "settings": { "title": "Calças" } },
+        "c4": { "type": "collection", "settings": { "title": "Jaquetas" } },
+        "c5": { "type": "collection", "settings": { "title": "Acessórios" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5"],
+      "settings": {
+        "heading": "Compre por categoria",
+        "style": "tiles",
+        "columns": 5,
+        "margin_top": 56,
+        "margin_bottom": 40
+      }
+    },
+    "shelf_best": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Mais desejados",
+        "layout": "carousel",
+        "limit": 12,
+        "columns": 4,
+        "show_view_all": true,
+        "margin_top": 24,
+        "margin_bottom": 56
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "subheading": "Nossa essência",
+        "heading": "Moda que atravessa o tempo",
+        "button_label": "Conheça",
+        "alignment": "left",
+        "background": "#F5F3F1",
+        "margin_top": 0,
+        "margin_bottom": 20
+      }
+    }
+  },
+  "order": ["hero", "shelf_new", "banner_main", "duo", "banner_texturas", "categories", "shelf_best", "story"]
+}

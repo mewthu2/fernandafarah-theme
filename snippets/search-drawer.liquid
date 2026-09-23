@@ -1,0 +1,29 @@
+{% doc %}
+  Renders the search drawer with predictive search results.
+
+  @example
+  {% render 'search-drawer' %}
+{% enddoc %}
+
+<div class="search-drawer" id="SearchDrawer" data-search-drawer aria-hidden="true">
+  <div class="search-drawer__overlay" data-drawer-close></div>
+  <div class="search-drawer__panel" role="dialog" aria-modal="true" aria-label="{{ 'search.title' | t }}">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-drawer__form">
+      <input type="hidden" name="type" value="product">
+      <label for="SearchDrawerInput" class="visually-hidden">{{ 'search.placeholder' | t }}</label>
+      {% render 'icon', icon: 'search' %}
+      <input
+        id="SearchDrawerInput"
+        type="search"
+        name="q"
+        placeholder="{{ 'search.placeholder' | t }}"
+        autocomplete="off"
+        data-predictive-input
+      >
+      <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">
+        {% render 'icon', icon: 'close' %}
+      </button>
+    </form>
+    <div class="search-drawer__results" data-predictive-results aria-live="polite"></div>
+  </div>
+</div>

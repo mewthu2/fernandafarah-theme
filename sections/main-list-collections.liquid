@@ -1,0 +1,27 @@
+<div class="page-width section-spacing" style="--banner-mt: 32px; --banner-mb: 48px;">
+  <h1 class="page-title">{{ 'collections.all_collections' | t }}</h1>
+  <ul class="cat-grid" role="list">
+    {%- for collection in collections -%}
+      <li class="cat-list__item">
+        <a href="{{ collection.url }}">
+          <div class="cat-list__media">
+            {%- if collection.featured_image -%}
+              {{ collection.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 25vw, 50vw', widths: '300, 500, 800', class: 'cat-list__img' }}
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'cat-list__img placeholder' }}
+            {%- endif -%}
+          </div>
+          <span class="cat-list__title">{{ collection.title | escape }}</span>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "Lista de coleções",
+  "class": "section-list-collections",
+  "settings": []
+}
+{% endschema %}

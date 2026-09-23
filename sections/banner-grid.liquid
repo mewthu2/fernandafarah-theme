@@ -1,0 +1,93 @@
+<div class="banner-grid section-spacing{% if section.settings.full_width == false %} page-width{% endif %}" style="--cols: {{ section.settings.columns }}; --gap: {{ section.settings.gap }}px; --banner-mt: {{ section.settings.margin_top }}px; --banner-mb: {{ section.settings.margin_bottom }}px;">
+  {%- if section.settings.heading != blank -%}
+    <h2 class="section-title">{{ section.settings.heading }}</h2>
+  {%- endif -%}
+  <div class="banner-grid__items{% if section.settings.mobile_scroll %} banner-grid__items--scroll{% endif %}">
+    {%- for block in section.blocks -%}
+      <a href="{{ block.settings.link | default: '#' }}" class="banner-grid__item" style="--slide-color: {{ block.settings.text_color }};" {{ block.shopify_attributes }}>
+        <div class="banner-grid__media ratio-{{ section.settings.ratio }}">
+          {%- if block.settings.image != blank -%}
+            {{
+              block.settings.image
+              | image_url: width: 1400
+              | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 50vw, 100vw', widths: '500, 750, 1000, 1400', class: 'banner-grid__img'
+            }}
+          {%- else -%}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'banner-grid__img placeholder' }}
+          {%- endif -%}
+        </div>
+        {%- if block.settings.heading != blank or block.settings.button_label != blank -%}
+          <div class="banner-grid__content banner-grid__content--{{ section.settings.text_position }}">
+            {%- if block.settings.heading != blank -%}
+              <h3 class="banner-grid__heading">{{ block.settings.heading }}</h3>
+            {%- endif -%}
+            {%- if block.settings.button_label != blank -%}
+              <span class="banner-grid__cta">{{ block.settings.button_label }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Grade de banners",
+  "class": "section-banner-grid",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título" },
+    { "type": "range", "id": "columns", "label": "Colunas (desktop)", "min": 1, "max": 4, "step": 1, "default": 2 },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Proporção das imagens",
+      "options": [
+        { "value": "portrait", "label": "Retrato" },
+        { "value": "square", "label": "Quadrado" },
+        { "value": "landscape", "label": "Paisagem" },
+        { "value": "adapt", "label": "Original" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Posição do texto",
+      "options": [
+        { "value": "inside", "label": "Sobre a imagem" },
+        { "value": "below", "label": "Abaixo da imagem" }
+      ],
+      "default": "inside"
+    },
+    { "type": "checkbox", "id": "full_width", "label": "Largura total", "default": true },
+    { "type": "checkbox", "id": "mobile_scroll", "label": "Rolagem lateral no mobile", "default": false },
+    { "type": "range", "id": "gap", "label": "Espaço entre banners", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "margin_top", "label": "Espaço acima", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "label": "Espaço abaixo", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 20 }
+  ],
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagem" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "text", "id": "heading", "label": "Título", "default": "Conjuntos" },
+        { "type": "text", "id": "button_label", "label": "Texto do link", "default": "Shop now" },
+        { "type": "color", "id": "text_color", "label": "Cor do texto (sobre imagem)", "default": "#FFFFFF" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Grade de banners",
+      "blocks": [
+        { "type": "banner" },
+        { "type": "banner", "settings": { "heading": "Fluidez" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

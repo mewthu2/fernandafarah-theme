@@ -1,0 +1,45 @@
+<div class="account-form page-width page-width--narrow">
+  <div id="LoginPanel">
+    <h1 class="page-title">{{ 'customer.login.title' | t }}</h1>
+    {%- form 'customer_login', class: 'form' -%}
+      {{ form.errors | default_errors }}
+      <div class="field">
+        <label for="LoginEmail">{{ 'customer.email' | t }}</label>
+        <input type="email" id="LoginEmail" name="customer[email]" autocomplete="email" required>
+      </div>
+      {%- if form.password_needed -%}
+        <div class="field">
+          <label for="LoginPassword">{{ 'customer.password' | t }}</label>
+          <input type="password" id="LoginPassword" name="customer[password]" autocomplete="current-password" required>
+        </div>
+        <a href="#RecoverPanel" class="link-underline" data-toggle-recover>{{ 'customer.login.forgot' | t }}</a>
+      {%- endif -%}
+      <button type="submit" class="button button--full">{{ 'customer.login.submit' | t }}</button>
+    {%- endform -%}
+    <p class="account-form__alt">{{ 'customer.login.new' | t }} <a href="{{ routes.account_register_url }}" class="link-underline">{{ 'customer.register.title' | t }}</a></p>
+    {%- if shop.checkout.guest_login -%}
+      {%- form 'guest_login' -%}
+        <button type="submit" class="button button--outline button--full">{{ 'customer.login.guest' | t }}</button>
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+
+  <div id="RecoverPanel" class="account-form__recover">
+    <h2 class="section-title">{{ 'customer.recover.title' | t }}</h2>
+    {%- form 'recover_customer_password', class: 'form' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="form-success">{{ 'customer.recover.success' | t }}</p>
+      {%- endif -%}
+      {{ form.errors | default_errors }}
+      <div class="field">
+        <label for="RecoverEmail">{{ 'customer.email' | t }}</label>
+        <input type="email" id="RecoverEmail" name="email" autocomplete="email" required>
+      </div>
+      <button type="submit" class="button button--outline button--full">{{ 'customer.recover.submit' | t }}</button>
+    {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Login", "class": "section-login", "settings": [] }
+{% endschema %}

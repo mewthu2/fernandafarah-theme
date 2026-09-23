@@ -1,0 +1,185 @@
+{% doc %}
+  Renders a product card with hover image, badges, color swatches and quick add sizes.
+
+  @param {product} product - The product
+  @param {string} [sizes] - Image sizes attribute
+  @param {boolean} [lazy] - Lazy load image, defaults to true
+
+  @example
+  {% render 'product-card', product: product %}
+{% enddoc %}
+
+{%- liquid
+  assign sizes = sizes | default: '(min-width: 990px) 25vw, 50vw'
+  assign loading = 'lazy'
+  if lazy == false
+    assign loading = 'eager'
+  endif
+
+  assign color_names = settings.card_color_option_name | downcase | split: ','
+  assign color_option = nil
+  assign size_option = nil
+  assign color_index = nil
+  for option in product.options_with_values
+    assign option_name = option.name | downcase | strip
+    assign is_color = false
+    for name in color_names
+      assign trimmed = name | strip
+      if trimmed == option_name
+        assign is_color = true
+      endif
+    endfor
+    if is_color and color_option == nil
+      assign color_option = option
+      assign color_index = forloop.index0
+    elsif size_option == nil
+      assign size_option = option
+      assign size_index = forloop.index0
+    endif
+  endfor
+
+  assign first_variant = product.selected_or_first_available_variant
+  assign is_new = false
+  if settings.new_tag != blank
+    assign new_tag = settings.new_tag | downcase
+    for tag in product.tags
+      assign tag_down = tag | downcase
+      if tag_down == new_tag
+        assign is_new = true
+      endif
+    endfor
+  endif
+  assign card_url = product.url
+-%}
+
+<article class="card" data-product-card>
+  <div class="card__media">
+    <a href="{{ card_url }}" class="card__link" tabindex="-1" aria-hidden="true">
+      {%- if product.featured_media -%}
+        {{
+          product.featured_media
+          | image_url: width: 900
+          | image_tag:
+            loading: loading,
+            sizes: sizes,
+            widths: '300, 450, 600, 750, 900',
+            class: 'card__img card__img--primary',
+            alt: product.featured_media.alt,
+            data-card-image: ''
+        }}
+        {%- if settings.card_show_second_image and product.media.size > 1 -%}
+          {{
+            product.media[1]
+            | image_url: width: 900
+            | image_tag:
+              loading: 'lazy',
+              sizes: sizes,
+              widths: '300, 450, 600, 750, 900',
+              class: 'card__img card__img--secondary',
+              alt: ''
+          }}
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-apparel-1' | placeholder_svg_tag: 'card__img placeholder' }}
+      {%- endif -%}
+    </a>
+
+    <div class="card__badges">
+      {%- if product.available == false -%}
+        <span class="badge badge--soldout">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif is_new -%}
+        <span class="badge">{{ 'products.product.new' | t }}</span>
+      {%- endif -%}
+    </div>
+
+    {%- if settings.card_show_quick_add and product.available -%}
+      <div class="card__quick">
+        {%- if product.has_only_default_variant -%}
+          <button type="button" class="card__quick-btn card__quick-btn--full" data-quick-add="{{ first_variant.id }}">
+            {{ 'products.product.add_to_cart' | t }}
+          </button>
+        {%- elsif size_option -%}
+          <span class="card__quick-label">{{ 'products.product.quick_add' | t }}</span>
+          <div class="card__quick-sizes">
+            {%- for variant in product.variants -%}
+              {%- liquid
+                assign show = true
+                if color_option
+                  assign v_color = variant.options[color_index]
+                  assign f_color = first_variant.options[color_index]
+                  if v_color != f_color
+                    assign show = false
+                  endif
+                endif
+              -%}
+              {%- if show -%}
+                <button
+                  type="button"
+                  class="card__quick-btn"
+                  data-quick-add="{{ variant.id }}"
+                  {% unless variant.available %}
+                    disabled
+                  {% endunless %}
+                >
+                  {{ variant.options[size_index] }}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="card__info">
+    <h3 class="card__title">
+      <a href="{{ card_url }}">{{ product.title | escape }}</a>
+    </h3>
+    {% render 'price', product: product, show_installments: true %}
+
+    {%- if settings.card_show_swatches and color_option and color_option.values.size > 1 -%}
+      <ul class="card__swatches" aria-label="{{ color_option.name | escape }}">
+        {%- for value in color_option.values limit: 6 -%}
+          {%- liquid
+            if value.swatch.image
+              assign swatch_img_url = value.swatch.image | image_url: width: 40
+              assign swatch_style = 'background-image: url(' | append: swatch_img_url | append: ')'
+            elsif value.swatch.color
+              assign swatch_style = 'background-color: ' | append: value.swatch.color
+            else
+              capture swatch_color
+                render 'swatch-color', name: value
+              endcapture
+              assign swatch_color = swatch_color | strip
+              assign swatch_style = 'background-color: ' | append: swatch_color
+            endif
+            assign swatch_image = ''
+            if value.variant.featured_media
+              assign swatch_image = value.variant.featured_media | image_url: width: 900
+            endif
+            assign swatch_url = card_url
+            if value.variant
+              assign swatch_url = value.variant.url
+            endif
+          -%}
+          <li>
+            <a
+              href="{{ swatch_url }}"
+              class="swatch{% if value.selected %} is-active{% endif %}"
+              style="{{ swatch_style }}"
+              title="{{ value | escape }}"
+              {% if swatch_image != blank %}
+                data-swatch-image="{{ swatch_image }}"
+              {% endif %}
+            >
+              <span class="visually-hidden">{{ value | escape }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+        {%- if color_option.values.size > 6 -%}
+          <li class="card__swatches-more">+{{ color_option.values.size | minus: 6 }}</li>
+        {%- endif -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</article>

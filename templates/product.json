@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": { "type": "title", "settings": { "show_sku": true } },
+        "price": { "type": "price", "settings": {} },
+        "picker": { "type": "variant_picker", "settings": {} },
+        "buy": { "type": "buy_buttons", "settings": { "show_dynamic_checkout": false, "note": "Troca grátis em até 15 dias" } },
+        "description": { "type": "description", "settings": { "title": "Descrição", "open": true } },
+        "care": {
+          "type": "collapsible",
+          "settings": {
+            "title": "Composição e cuidados",
+            "content": "<p>Consulte a etiqueta interna da peça para instruções de lavagem.</p>"
+          }
+        },
+        "shipping": {
+          "type": "collapsible",
+          "settings": {
+            "title": "Entrega e trocas",
+            "content": "<p>Enviamos para todo o Brasil. A primeira troca é grátis em até 15 dias após o recebimento.</p>"
+          }
+        }
+      },
+      "block_order": ["title", "price", "picker", "buy", "description", "care", "shipping"],
+      "settings": { "gallery_layout": "grid" }
+    },
+    "related": {
+      "type": "related-products",
+      "settings": { "heading": "Você também pode gostar", "intent": "related", "limit": 8, "columns": 4 }
+    }
+  },
+  "order": ["main", "related"]
+}

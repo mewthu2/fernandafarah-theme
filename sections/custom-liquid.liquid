@@ -1,0 +1,17 @@
+<div class="custom-liquid{% if section.settings.page_width %} page-width{% endif %}">
+  {{ section.settings.custom_liquid }}
+</div>
+
+{% schema %}
+{
+  "name": "Liquid personalizado",
+  "class": "section-custom-liquid",
+  "settings": [
+    { "type": "liquid", "id": "custom_liquid", "label": "Código Liquid / HTML" },
+    { "type": "checkbox", "id": "page_width", "label": "Limitar largura", "default": true }
+  ],
+  "presets": [
+    { "name": "Liquid personalizado" }
+  ]
+}
+{% endschema %}

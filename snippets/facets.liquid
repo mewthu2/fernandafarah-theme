@@ -1,0 +1,183 @@
+{% doc %}
+  Renders the filter drawer, toolbar and active filters for collections and search.
+
+  @param {object} results - The collection or search object
+  @param {number} count - Number of results
+  @param {string} [terms] - Search terms, when on search page
+
+  @example
+  {% render 'facets', results: collection, count: collection.products_count %}
+{% enddoc %}
+
+{%- liquid
+  assign sort_by = results.sort_by | default: results.default_sort_by
+  assign active_count = 0
+  for filter in results.filters
+    assign active_count = active_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != null or filter.max_value.value != null
+        assign active_count = active_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+
+<div class="toolbar page-width">
+  <p class="toolbar__count">{{ 'collections.count' | t: number: count }}</p>
+  <div class="toolbar__actions">
+    {%- if results.filters.size > 0 -%}
+      <button type="button" class="toolbar__btn" data-filters-open>
+        {% render 'icon', icon: 'filter' %}
+        {{ 'collections.filter' | t }}
+        {%- if active_count > 0 %} ({{ active_count }}){% endif -%}
+      </button>
+    {%- endif -%}
+    <form class="toolbar__sort" method="get" data-sort-form>
+      {%- if terms -%}
+        <input type="hidden" name="q" value="{{ terms | escape }}">
+        <input type="hidden" name="type" value="product">
+      {%- endif -%}
+      {%- for filter in results.filters -%}
+        {%- for value in filter.active_values -%}
+          <input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">
+        {%- endfor -%}
+        {%- if filter.type == 'price_range' -%}
+          {%- if filter.min_value.value -%}<input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value }}">{%- endif -%}
+          {%- if filter.max_value.value -%}<input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value }}">{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      <label for="SortBy" class="visually-hidden">{{ 'collections.sort_by' | t }}</label>
+      <select id="SortBy" name="sort_by" data-sort-select>
+        {%- for option in results.sort_options -%}
+          <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name | escape }}</option>
+        {%- endfor -%}
+      </select>
+    </form>
+    <div class="toolbar__grid" role="group" aria-label="{{ 'collections.grid' | t }}">
+      <button type="button" data-grid-cols="2" aria-label="2">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1" y="1" width="6" height="14"/><rect x="9" y="1" width="6" height="14"/></svg>
+      </button>
+      <button type="button" data-grid-cols="4" aria-label="4">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1" y="1" width="2.5" height="14"/><rect x="5" y="1" width="2.5" height="14"/><rect x="9" y="1" width="2.5" height="14"/><rect x="13" y="1" width="2.5" height="14"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+{%- if active_count > 0 -%}
+  <div class="active-filters page-width">
+    {%- for filter in results.filters -%}
+      {%- for value in filter.active_values -%}
+        <a href="{{ value.url_to_remove }}" class="active-filters__pill">{{ value.label | escape }} {% render 'icon', icon: 'close' %}</a>
+      {%- endfor -%}
+      {%- if filter.type == 'price_range' -%}
+        {%- if filter.min_value.value != null or filter.max_value.value != null -%}
+          <a href="{{ filter.url_to_remove }}" class="active-filters__pill">
+            {{ filter.min_value.value | default: 0 | money }} - {{ filter.max_value.value | default: filter.range_max | money }}
+            {% render 'icon', icon: 'close' %}
+          </a>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if terms -%}
+      <a href="{{ routes.search_url }}?q={{ terms | url_encode }}&type=product" class="active-filters__clear">{{ 'collections.clear_all' | t }}</a>
+    {%- else -%}
+      <a href="{{ results.url }}?sort_by={{ sort_by }}" class="active-filters__clear">{{ 'collections.clear_all' | t }}</a>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{%- if results.filters.size > 0 -%}
+  <div class="filters-drawer" data-filters-drawer aria-hidden="true">
+    <div class="filters-drawer__overlay" data-drawer-close></div>
+    <form class="filters-drawer__panel" method="get" role="dialog" aria-modal="true" aria-label="{{ 'collections.filter' | t }}">
+      {%- if terms -%}
+        <input type="hidden" name="q" value="{{ terms | escape }}">
+        <input type="hidden" name="type" value="product">
+      {%- endif -%}
+      <input type="hidden" name="sort_by" value="{{ sort_by }}">
+      <div class="drawer__header">
+        <span class="drawer__title">{{ 'collections.filter' | t }}</span>
+        <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', icon: 'close' %}</button>
+      </div>
+      <div class="drawer__body">
+        {%- for filter in results.filters -%}
+          <details class="accordion" {% if filter.active_values.size > 0 or forloop.index <= 2 %}open{% endif %}>
+            <summary>{{ filter.label | escape }} {% render 'icon', icon: 'plus' %}</summary>
+            <div class="accordion__content">
+              {%- case filter.type -%}
+                {%- when 'price_range' -%}
+                  <div class="price-range">
+                    <label>
+                      <span>{{ 'collections.from' | t }}</span>
+                      <input
+                        type="number"
+                        name="{{ filter.min_value.param_name }}"
+                        {% if filter.min_value.value %}
+                          value="{{ filter.min_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                        {% endif %}
+                        placeholder="0"
+                        min="0"
+                        max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                      >
+                    </label>
+                    <label>
+                      <span>{{ 'collections.to' | t }}</span>
+                      <input
+                        type="number"
+                        name="{{ filter.max_value.param_name }}"
+                        {% if filter.max_value.value %}
+                          value="{{ filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                        {% endif %}
+                        placeholder="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                        min="0"
+                        max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                      >
+                    </label>
+                  </div>
+                {%- else -%}
+                  <ul class="filter-values{% if filter.presentation == 'swatch' %} filter-values--swatch{% endif %}" role="list">
+                    {%- for value in filter.values -%}
+                      {%- assign value_id = 'Filter-' | append: filter.param_name | handleize | append: '-' | append: forloop.index -%}
+                      <li>
+                        <input
+                          type="checkbox"
+                          id="{{ value_id }}"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value }}"
+                          {% if value.active %}
+                            checked
+                          {% endif %}
+                          {% if value.count == 0 and value.active == false %}
+                            disabled
+                          {% endif %}
+                        >
+                        <label for="{{ value_id }}">
+                          {%- if filter.presentation == 'swatch' and value.swatch -%}
+                            {%- if value.swatch.image -%}
+                              <span class="swatch" style="background-image: url({{ value.swatch.image | image_url: width: 40 }})"></span>
+                            {%- else -%}
+                              <span class="swatch" style="background-color: {{ value.swatch.color }}"></span>
+                            {%- endif -%}
+                          {%- endif -%}
+                          {{ value.label | escape }} <small>({{ value.count }})</small>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+      <div class="drawer__footer filters-drawer__footer">
+        {%- if terms -%}
+          <a href="{{ routes.search_url }}?q={{ terms | url_encode }}&type=product" class="button button--outline">{{ 'collections.clear_all' | t }}</a>
+        {%- else -%}
+          <a href="{{ results.url }}" class="button button--outline">{{ 'collections.clear_all' | t }}</a>
+        {%- endif -%}
+        <button type="submit" class="button">{{ 'collections.apply' | t }}</button>
+      </div>
+    </form>
+  </div>
+{%- endif -%}

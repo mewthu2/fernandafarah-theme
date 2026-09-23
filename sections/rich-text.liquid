@@ -1,0 +1,83 @@
+<div class="rich-text section-spacing" style="--banner-mt: {{ section.settings.margin_top }}px; --banner-mb: {{ section.settings.margin_bottom }}px; background: {{ section.settings.background }};">
+  <div class="rich-text__inner page-width text-{{ section.settings.alignment }}">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'heading' -%}
+          <h2 class="rich-text__heading heading-{{ block.settings.size }}" {{ block.shopify_attributes }}>{{ block.settings.heading }}</h2>
+        {%- when 'text' -%}
+          <div class="rich-text__text" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+        {%- when 'button' -%}
+          <a href="{{ block.settings.link | default: '#' }}" class="button button--{{ block.settings.style }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Texto",
+  "class": "section-rich-text",
+  "settings": [
+    { "type": "text_alignment", "id": "alignment", "label": "Alinhamento", "default": "center" },
+    { "type": "color", "id": "background", "label": "Cor de fundo", "default": "#FFFFFF" },
+    { "type": "range", "id": "margin_top", "label": "Espaço acima", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "margin_bottom", "label": "Espaço abaixo", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Título",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Título", "default": "Moda que atravessa o tempo" },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "Tamanho",
+          "options": [
+            { "value": "md", "label": "Médio" },
+            { "value": "lg", "label": "Grande" },
+            { "value": "xl", "label": "Extra grande" }
+          ],
+          "default": "lg"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Texto",
+      "settings": [
+        { "type": "richtext", "id": "text", "label": "Texto", "default": "<p>Conte a história da sua marca, da coleção ou de uma campanha.</p>" }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Botão",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Texto", "default": "Descubra" },
+        { "type": "url", "id": "link", "label": "Link" },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Estilo",
+          "options": [
+            { "value": "primary", "label": "Sólido" },
+            { "value": "outline", "label": "Contorno" },
+            { "value": "link", "label": "Link sublinhado" }
+          ],
+          "default": "outline"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Texto",
+      "blocks": [
+        { "type": "heading" },
+        { "type": "text" },
+        { "type": "button" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,42 @@
+{% doc %}
+  Renders pagination as numbers or a load more button.
+
+  @param {object} paginate - The paginate object
+  @param {string} [style] - 'load_more' or 'numbers'
+
+  @example
+  {% render 'pagination', paginate: paginate, style: 'load_more' %}
+{% enddoc %}
+
+{%- if paginate.pages > 1 -%}
+  {%- if style == 'load_more' -%}
+    <div class="load-more" data-load-more>
+      <p class="load-more__status">
+        {%- assign shown = paginate.current_offset | plus: paginate.page_size | at_most: paginate.items -%}
+        {{ 'collections.showing' | t: shown: shown, total: paginate.items }}
+      </p>
+      <div class="load-more__bar"><span style="width: {{ shown | times: 100 | divided_by: paginate.items }}%"></span></div>
+      {%- if paginate.next -%}
+        <a href="{{ paginate.next.url }}" class="button button--outline" data-load-more-link>{{ 'collections.load_more' | t }}</a>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <nav class="pagination" aria-label="{{ 'general.pagination' | t }}">
+      {%- if paginate.previous -%}
+        <a href="{{ paginate.previous.url }}" aria-label="{{ 'general.previous' | t }}">{% render 'icon', icon: 'arrow-left' %}</a>
+      {%- endif -%}
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}
+          <a href="{{ part.url }}">{{ part.title }}</a>
+        {%- elsif part.title == paginate.current_page -%}
+          <span aria-current="page">{{ part.title }}</span>
+        {%- else -%}
+          <span>{{ part.title }}</span>
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if paginate.next -%}
+        <a href="{{ paginate.next.url }}" aria-label="{{ 'general.next' | t }}">{% render 'icon', icon: 'arrow-right' %}</a>
+      {%- endif -%}
+    </nav>
+  {%- endif -%}
+{%- endif -%}

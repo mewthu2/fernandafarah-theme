@@ -1,0 +1,112 @@
+{%- liquid
+  assign show = true
+  if section.settings.home_only and request.page_type != 'index'
+    assign show = false
+  endif
+-%}
+
+{%- if show -%}
+  <div
+    class="countdown-bar"
+    style="--cd-bg: {{ section.settings.background }}; --cd-color: {{ section.settings.text_color }};"
+    data-countdown
+    data-end="{{ section.settings.end_date }}"
+    data-hide-expired="{{ section.settings.hide_when_expired }}"
+  >
+    <div class="countdown-bar__inner page-width">
+      {%- if section.settings.title != blank -%}
+        <p class="countdown-bar__title">{{ section.settings.title }}</p>
+      {%- endif -%}
+      {%- if section.settings.end_date != blank -%}
+        <div class="countdown-bar__clock" aria-label="{{ 'general.countdown' | t }}">
+          <span><b data-cd-days>00</b><small>{{ 'general.days' | t }}</small></span>
+          <span><b data-cd-hours>00</b><small>{{ 'general.hours' | t }}</small></span>
+          <span><b data-cd-minutes>00</b><small>{{ 'general.minutes' | t }}</small></span>
+          <span><b data-cd-seconds>00</b><small>{{ 'general.seconds' | t }}</small></span>
+        </div>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <p class="countdown-bar__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+      {%- if section.settings.coupon != blank -%}
+        <button type="button" class="countdown-bar__coupon" data-copy="{{ section.settings.coupon | escape }}">
+          <small>{{ 'general.coupon' | t }}</small>
+          <b>{{ section.settings.coupon }}</b>
+        </button>
+      {%- endif -%}
+      {%- if section.settings.link != blank -%}
+        <a class="countdown-bar__link" href="{{ section.settings.link }}">
+          <span class="visually-hidden">{{ section.settings.title }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Barra com contagem",
+  "class": "section-countdown",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "ÚLTIMAS HORAS"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Descrição",
+      "default": "SALE PROGRESSIVA"
+    },
+    {
+      "type": "text",
+      "id": "coupon",
+      "label": "Cupom (clique para copiar)",
+      "default": "SALEPLUS"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Data final",
+      "info": "Formato: 2026-12-31T23:59 (horário de Brasília)",
+      "default": "2026-12-31T23:59"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_expired",
+      "label": "Esconder após terminar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "home_only",
+      "label": "Mostrar só na página inicial",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Cor de fundo",
+      "default": "#AB846E"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Cor do texto",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Barra com contagem"
+    }
+  ]
+}
+{% endschema %}

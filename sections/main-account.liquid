@@ -1,0 +1,50 @@
+<div class="account page-width section-spacing" style="--banner-mt: 32px; --banner-mb: 48px;">
+  <div class="account__header">
+    <h1 class="page-title">{{ 'customer.account.title' | t }}</h1>
+    <a href="{{ routes.account_logout_url }}" class="link-underline">{{ 'customer.account.logout' | t }}</a>
+  </div>
+  <div class="account__grid">
+    <div>
+      <h2 class="section-title">{{ 'customer.account.orders' | t }}</h2>
+      {%- paginate customer.orders by 20 -%}
+        {%- if customer.orders.size > 0 -%}
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ 'customer.order.number' | t }}</th>
+                <th>{{ 'customer.order.date' | t }}</th>
+                <th>{{ 'customer.order.payment' | t }}</th>
+                <th>{{ 'customer.order.fulfillment' | t }}</th>
+                <th>{{ 'customer.order.total' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for order in customer.orders -%}
+                <tr>
+                  <td><a href="{{ order.customer_url }}" class="link-underline">{{ order.name }}</a></td>
+                  <td>{{ order.created_at | time_tag: format: 'date' }}</td>
+                  <td>{{ order.financial_status_label }}</td>
+                  <td>{{ order.fulfillment_status_label }}</td>
+                  <td>{{ order.total_price | money }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+          {% render 'pagination', paginate: paginate, style: 'numbers' %}
+        {%- else -%}
+          <p>{{ 'customer.account.no_orders' | t }}</p>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+    <aside>
+      <h2 class="section-title">{{ 'customer.account.details' | t }}</h2>
+      <p>{{ customer.name }}<br>{{ customer.email }}</p>
+      {{ customer.default_address | format_address }}
+      <a href="{{ routes.account_addresses_url }}" class="link-underline">{{ 'customer.account.addresses' | t }} ({{ customer.addresses_count }})</a>
+    </aside>
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Minha conta", "class": "section-account", "settings": [] }
+{% endschema %}

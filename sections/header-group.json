@@ -1,0 +1,26 @@
+{
+  "type": "header",
+  "name": "Cabeçalho",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "msg1": { "type": "message", "settings": { "text": "Novidades | Nova coleção", "link_text": "DESCUBRA", "link": "shopify://collections/all" } },
+        "msg2": { "type": "message", "settings": { "text": "15% OFF na 1ª compra. Cupom: WELCOME", "link_text": "SHOP NOW", "link": "shopify://collections/all" } },
+        "msg3": { "type": "message", "settings": { "text": "Frete grátis acima de R$ 500", "link_text": "", "link": "" } }
+      },
+      "block_order": ["msg1", "msg2", "msg3"],
+      "settings": { "background": "#000000", "text_color": "#FFFFFF", "interval": 5 }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "layout": "logo_left",
+        "sticky": true,
+        "transparent_home": true
+      }
+    }
+  },
+  "order": ["announcement", "header"]
+}

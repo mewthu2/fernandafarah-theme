@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": { "type": "main-cart", "settings": {} },
+    "suggestions": { "type": "featured-collection", "settings": { "heading": "Você também pode gostar", "layout": "carousel", "limit": 8 } }
+  },
+  "order": ["main", "suggestions"]
+}

@@ -1,0 +1,45 @@
+<div class="contact page-width page-width--narrow">
+  {%- if section.settings.heading != blank -%}
+    <h2 class="section-title text-center">{{ section.settings.heading }}</h2>
+  {%- endif -%}
+  {%- form 'contact', class: 'form' -%}
+    {%- if form.posted_successfully? -%}
+      <p class="form-success" role="status">{{ 'contact.success' | t }}</p>
+    {%- endif -%}
+    {%- if form.errors -%}
+      <div class="form-error">{{ form.errors | default_errors }}</div>
+    {%- endif -%}
+    <div class="form__row">
+      <div class="field">
+        <label for="ContactName">{{ 'contact.name' | t }}</label>
+        <input id="ContactName" type="text" name="contact[name]" autocomplete="name" value="{{ form.name }}">
+      </div>
+      <div class="field">
+        <label for="ContactEmail">{{ 'contact.email' | t }} *</label>
+        <input id="ContactEmail" type="email" name="contact[email]" autocomplete="email" required value="{{ form.email }}">
+      </div>
+    </div>
+    <div class="field">
+      <label for="ContactPhone">{{ 'contact.phone' | t }}</label>
+      <input id="ContactPhone" type="tel" name="contact[phone]" autocomplete="tel" value="{{ form.phone }}">
+    </div>
+    <div class="field">
+      <label for="ContactBody">{{ 'contact.message' | t }}</label>
+      <textarea id="ContactBody" name="contact[body]" rows="6">{{ form.body }}</textarea>
+    </div>
+    <button type="submit" class="button">{{ 'contact.send' | t }}</button>
+  {%- endform -%}
+</div>
+
+{% schema %}
+{
+  "name": "Formulário de contato",
+  "class": "section-contact",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Fale conosco" }
+  ],
+  "presets": [
+    { "name": "Formulário de contato" }
+  ]
+}
+{% endschema %}

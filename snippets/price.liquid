@@ -1,0 +1,64 @@
+{% doc %}
+  Renders price, compare-at price, installments and Pix price.
+
+  @param {product} product - The product
+  @param {variant} [variant] - Variant to price, defaults to selected or first available
+  @param {boolean} [show_installments] - Show installments line
+  @param {boolean} [large] - Larger price style for product page
+
+  @example
+  {% render 'price', product: product, show_installments: true %}
+{% enddoc %}
+
+{%- liquid
+  assign target = variant | default: product.selected_or_first_available_variant
+  assign price = target.price | default: product.price
+  assign compare_at = target.compare_at_price
+  assign on_sale = false
+  if compare_at > price
+    assign on_sale = true
+  endif
+
+  assign installments = 0
+  if settings.show_installments and show_installments
+    assign min_cents = settings.installments_min_value | times: 100 | at_least: 1
+    assign installments = price | divided_by: min_cents | at_most: settings.installments_max
+  endif
+-%}
+
+<div class="price{% if on_sale %} price--sale{% endif %}{% if large %} price--large{% endif %}">
+  <div class="price__main">
+    {%- if on_sale -%}
+      <span class="visually-hidden">{{ 'products.price.regular' | t }}</span>
+      <s class="price__compare">{{ compare_at | money }}</s>
+      <span class="visually-hidden">{{ 'products.price.sale' | t }}</span>
+    {%- endif -%}
+    <span class="price__current">
+      {%- if product.price_varies and variant == blank and large != true -%}
+        {%- assign price_min_formatted = product.price_min | money -%}
+        {{ 'products.price.from' | t: price: price_min_formatted }}
+      {%- else -%}
+        {{ price | money }}
+      {%- endif -%}
+    </span>
+    {%- if on_sale and settings.show_discount_badge -%}
+      {%- assign discount = compare_at | minus: price | times: 100 | divided_by: compare_at -%}
+      <span class="price__off">-{{ discount }}%</span>
+    {%- endif -%}
+  </div>
+
+  {%- if installments >= 2 -%}
+    {%- assign installment_value = price | divided_by: installments | money -%}
+    <div class="price__installments">
+      {{ 'products.price.installments' | t: number: installments, value: installment_value }}
+    </div>
+  {%- endif -%}
+
+  {%- if settings.show_pix and show_installments -%}
+    {%- assign pix_multiplier = 100 | minus: settings.pix_discount -%}
+    {%- assign pix_price = price | times: pix_multiplier | divided_by: 100 | money -%}
+    <div class="price__pix">
+      {{ 'products.price.pix' | t: price: pix_price, discount: settings.pix_discount }}
+    </div>
+  {%- endif -%}
+</div>

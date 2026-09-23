@@ -1,0 +1,41 @@
+<div class="account page-width page-width--narrow section-spacing" style="--banner-mt: 32px; --banner-mb: 48px;">
+  <a href="{{ routes.account_url }}" class="link-underline">{{ 'customer.order.back' | t }}</a>
+  <h1 class="page-title">{{ 'customer.account.addresses' | t }}</h1>
+
+  {%- paginate customer.addresses by 10 -%}
+    <ul class="addresses" role="list">
+      {%- for address in customer.addresses -%}
+        <li class="addresses__item">
+          {%- if address == customer.default_address -%}<p class="eyebrow">{{ 'customer.addresses.default' | t }}</p>{%- endif -%}
+          {{ address | format_address }}
+          <details>
+            <summary class="link-underline">{{ 'customer.addresses.edit' | t }}</summary>
+            {%- form 'customer_address', address, class: 'form' -%}
+              {% render 'address-fields', form: form, prefix: address.id %}
+              <button type="submit" class="button">{{ 'customer.addresses.save' | t }}</button>
+            {%- endform -%}
+          </details>
+          <form method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}">
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="link-underline button-reset">{{ 'customer.addresses.delete' | t }}</button>
+          </form>
+        </li>
+      {%- endfor -%}
+    </ul>
+    {% render 'pagination', paginate: paginate, style: 'numbers' %}
+  {%- endpaginate -%}
+
+  <details class="accordion" {% if customer.addresses_count == 0 %}open{% endif %}>
+    <summary>{{ 'customer.addresses.add' | t }} {% render 'icon', icon: 'plus' %}</summary>
+    <div class="accordion__content">
+      {%- form 'customer_address', customer.new_address, class: 'form' -%}
+        {% render 'address-fields', form: form, prefix: 'new' %}
+        <button type="submit" class="button">{{ 'customer.addresses.save' | t }}</button>
+      {%- endform -%}
+    </div>
+  </details>
+</div>
+
+{% schema %}
+{ "name": "Endereços", "class": "section-addresses", "settings": [] }
+{% endschema %}

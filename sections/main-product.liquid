@@ -1,0 +1,323 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign color_names = settings.card_color_option_name | downcase | split: ','
+  assign featured_media_id = current_variant.featured_media.id | default: product.featured_media.id
+  assign guide_shown = false
+-%}
+
+<section
+  class="product page-width-wide"
+  data-product
+  data-section-id="{{ section.id }}"
+  data-url="{{ product.url }}"
+>
+  <div class="product__gallery" data-gallery>
+    <div class="product__media-list gallery--{{ section.settings.gallery_layout }}" data-media-list>
+      {%- for media in product.media -%}
+        <div
+          class="product__media-item{% if media.id == featured_media_id %} is-active{% endif %}"
+          data-media-id="{{ media.id }}"
+        >
+          {%- case media.media_type -%}
+            {%- when 'image' -%}
+              {%- liquid
+                assign media_loading = 'eager'
+                if forloop.index > 2
+                  assign media_loading = 'lazy'
+                endif
+              -%}
+              <button type="button" class="product__zoom" data-zoom="{{ media | image_url: width: 2400 }}" aria-label="{{ 'products.product.zoom' | t }}">
+                {{
+                  media
+                  | image_url: width: 1600
+                  | image_tag:
+                    loading: media_loading,
+                    sizes: '(min-width: 990px) 33vw, 100vw',
+                    widths: '400, 600, 800, 1000, 1300, 1600',
+                    class: 'product__img',
+                    alt: media.alt
+                }}
+              </button>
+            {%- when 'video' -%}
+              {{ media | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, class: 'product__img', image_size: '1200x' }}
+            {%- when 'external_video' -%}
+              {{ media | external_video_tag: class: 'product__img' }}
+            {%- else -%}
+              {{ media | media_tag: class: 'product__img' }}
+          {%- endcase -%}
+        </div>
+      {%- else -%}
+        <div class="product__media-item">{{ 'product-apparel-1' | placeholder_svg_tag: 'product__img placeholder' }}</div>
+      {%- endfor -%}
+    </div>
+    {%- if product.media.size > 1 -%}
+      <div class="product__dots" aria-hidden="true">
+        {%- for media in product.media -%}
+          <span class="product__dot{% if forloop.first %} is-active{% endif %}"></span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="product__info">
+    <div class="product__info-inner">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'title' -%}
+            <div class="product__title-wrap" {{ block.shopify_attributes }}>
+              <h1 class="product__title">{{ product.title | escape }}</h1>
+              {%- if block.settings.show_sku -%}
+                <p class="product__sku" data-sku>{% if current_variant.sku != blank %}{{ 'products.product.sku' | t }}: {{ current_variant.sku }}{% endif %}</p>
+              {%- endif -%}
+            </div>
+
+          {%- when 'price' -%}
+            <div class="product__price" data-price {{ block.shopify_attributes }}>
+              {% render 'price', product: product, variant: current_variant, show_installments: true, large: true %}
+            </div>
+
+          {%- when 'variant_picker' -%}
+            {%- unless product.has_only_default_variant -%}
+              <div class="variant-picker" data-variant-picker {{ block.shopify_attributes }}>
+                {%- for option in product.options_with_values -%}
+                  {%- liquid
+                    assign option_down = option.name | downcase | strip
+                    assign is_color = false
+                    for name in color_names
+                      assign trimmed = name | strip
+                      if trimmed == option_down
+                        assign is_color = true
+                      endif
+                    endfor
+                  -%}
+                  <fieldset class="variant-picker__option{% if is_color %} variant-picker__option--color{% endif %}">
+                    <legend class="variant-picker__legend">
+                      {{ option.name }}: <span data-selected-value>{{ option.selected_value }}</span>
+                      {%- if is_color == false and guide_shown != true and block.settings.size_guide_page != blank -%}
+                        {%- assign guide_shown = true -%}
+                        <button type="button" class="variant-picker__guide" data-size-guide-open>{{ 'products.product.size_guide' | t }}</button>
+                      {%- endif -%}
+                    </legend>
+                    <div class="variant-picker__values">
+                      {%- for value in option.values -%}
+                        {%- liquid
+                          assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0
+                          assign swatch_style = ''
+                          if is_color
+                            if value.swatch.image
+                              assign swatch_img_url = value.swatch.image | image_url: width: 60
+                              assign swatch_style = 'background-image: url(' | append: swatch_img_url | append: ')'
+                            elsif value.swatch.color
+                              assign swatch_style = 'background-color: ' | append: value.swatch.color
+                            else
+                              capture swatch_color
+                                render 'swatch-color', name: value
+                              endcapture
+                              assign swatch_color = swatch_color | strip
+                              assign swatch_style = 'background-color: ' | append: swatch_color
+                            endif
+                          endif
+                        -%}
+                        <input
+                          type="radio"
+                          id="{{ input_id }}"
+                          name="option-{{ section.id }}-{{ option.position }}"
+                          value="{{ value | escape }}"
+                          data-option-index="{{ forloop.parentloop.index0 }}"
+                          {% if value.selected %}
+                            checked
+                          {% endif %}
+                          class="visually-hidden"
+                        >
+                        <label
+                          for="{{ input_id }}"
+                          class="{% if is_color %}swatch swatch--lg{% else %}size-pill{% endif %}{% unless value.available %} is-unavailable{% endunless %}"
+                          {% if is_color %}
+                            style="{{ swatch_style }}" title="{{ value | escape }}"
+                          {% endif %}
+                        >
+                          {%- if is_color -%}
+                            <span class="visually-hidden">{{ value }}</span>
+                          {%- else -%}
+                            {{ value }}
+                          {%- endif -%}
+                        </label>
+                      {%- endfor -%}
+                    </div>
+                  </fieldset>
+                {%- endfor -%}
+                <script type="application/json" data-variants>
+                  {{ product.variants | json }}
+                </script>
+              </div>
+            {%- endunless -%}
+
+            {%- if block.settings.size_guide_page != blank -%}
+              <div class="size-guide" data-size-guide aria-hidden="true">
+                <div class="size-guide__overlay" data-drawer-close></div>
+                <div class="size-guide__panel" role="dialog" aria-modal="true" aria-label="{{ 'products.product.size_guide' | t }}">
+                  <div class="drawer__header">
+                    <span class="drawer__title">{{ block.settings.size_guide_page.title }}</span>
+                    <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', icon: 'close' %}</button>
+                  </div>
+                  <div class="drawer__body rte">{{ block.settings.size_guide_page.content }}</div>
+                </div>
+              </div>
+            {%- endif -%}
+
+          {%- when 'buy_buttons' -%}
+            <div class="product__buy" data-buy {{ block.shopify_attributes }}>
+              {%- form 'product', product, class: 'product-form', data-product-form: '', novalidate: 'novalidate' -%}
+                <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+                <div class="product-form__buttons">
+                  <button
+                    type="submit"
+                    name="add"
+                    class="button button--full"
+                    data-add-button
+                    {% unless current_variant.available %}
+                      disabled
+                    {% endunless %}
+                  >
+                    {%- if current_variant.available -%}
+                      {{ 'products.product.add_to_cart' | t }}
+                    {%- else -%}
+                      {{ 'products.product.sold_out' | t }}
+                    {%- endif -%}
+                  </button>
+                  {%- if block.settings.show_dynamic_checkout -%}
+                    {{ form | payment_button }}
+                  {%- endif -%}
+                </div>
+                <p class="product-form__error" role="alert" data-form-error hidden></p>
+              {%- endform -%}
+              {%- if block.settings.note != blank -%}
+                <div class="product__note">{% render 'icon', icon: 'truck' %}<span>{{ block.settings.note }}</span></div>
+              {%- endif -%}
+            </div>
+
+          {%- when 'description' -%}
+            {%- if product.description != blank -%}
+              <details class="accordion" {% if block.settings.open %}open{% endif %} {{ block.shopify_attributes }}>
+                <summary>{{ block.settings.title }} {% render 'icon', icon: 'plus' %}</summary>
+                <div class="accordion__content rte">{{ product.description }}</div>
+              </details>
+            {%- endif -%}
+
+          {%- when 'collapsible' -%}
+            {%- liquid
+              assign content = block.settings.content
+              if block.settings.page != blank
+                assign content = block.settings.page.content
+              endif
+            -%}
+            {%- if content != blank -%}
+              <details class="accordion" {{ block.shopify_attributes }}>
+                <summary>{{ block.settings.title }} {% render 'icon', icon: 'plus' %}</summary>
+                <div class="accordion__content rte">{{ content }}</div>
+              </details>
+            {%- endif -%}
+
+          {%- when 'text' -%}
+            <div class="product__text rte" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+
+          {%- when 'custom_liquid' -%}
+            <div {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<dialog class="zoom-dialog" data-zoom-dialog>
+  <button type="button" class="icon-btn zoom-dialog__close" data-zoom-close aria-label="{{ 'general.close' | t }}">{% render 'icon', icon: 'close' %}</button>
+  <img alt="" width="1600" height="2400" data-zoom-img>
+</dialog>
+
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+{% schema %}
+{
+  "name": "Produto",
+  "class": "section-main-product",
+  "settings": [
+    {
+      "type": "select",
+      "id": "gallery_layout",
+      "label": "Galeria (desktop)",
+      "options": [
+        { "value": "grid", "label": "Grade 2 colunas" },
+        { "value": "stack", "label": "Uma coluna" }
+      ],
+      "default": "grid"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "Título",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_sku", "label": "Mostrar referência (SKU)", "default": true }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Preço",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "variant_picker",
+      "name": "Seletor de variantes",
+      "limit": 1,
+      "settings": [
+        { "type": "page", "id": "size_guide_page", "label": "Página de guia de medidas" }
+      ]
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Botão de compra",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Mostrar botão de compra rápida", "default": false },
+        { "type": "text", "id": "note", "label": "Aviso abaixo do botão", "default": "Troca grátis em até 15 dias" }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Descrição",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Descrição" },
+        { "type": "checkbox", "id": "open", "label": "Aberto por padrão", "default": true }
+      ]
+    },
+    {
+      "type": "collapsible",
+      "name": "Aba recolhível",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Composição e cuidados" },
+        { "type": "richtext", "id": "content", "label": "Conteúdo", "info": "Pode usar fontes dinâmicas (metacampos)." },
+        { "type": "page", "id": "page", "label": "Ou conteúdo de uma página" }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Texto",
+      "settings": [
+        { "type": "richtext", "id": "text", "label": "Texto", "default": "<p>Texto</p>" }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Liquid personalizado",
+      "settings": [
+        { "type": "liquid", "id": "custom_liquid", "label": "Código" }
+      ]
+    }
+  ]
+}
+{% endschema %}

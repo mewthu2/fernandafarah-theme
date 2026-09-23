@@ -1,0 +1,19 @@
+<article class="article page-width page-width--narrow section-spacing" style="--banner-mt: 32px; --banner-mb: 48px;">
+  <p class="eyebrow"><a href="{{ blog.url }}">{{ blog.title | escape }}</a> · {{ article.published_at | time_tag: format: 'date' }}</p>
+  <h1 class="page-title">{{ article.title | escape }}</h1>
+  {%- if article.image -%}
+    <div class="article__media">
+      {{ article.image | image_url: width: 1600 | image_tag: loading: 'eager', sizes: '(min-width: 750px) 800px, 100vw', widths: '600, 900, 1200, 1600' }}
+    </div>
+  {%- endif -%}
+  <div class="rte">{{ article.content }}</div>
+  <a href="{{ blog.url }}" class="link-underline">{{ 'blog.back' | t }}</a>
+</article>
+
+{% schema %}
+{
+  "name": "Artigo",
+  "class": "section-main-article",
+  "settings": []
+}
+{% endschema %}

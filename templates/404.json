@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": { "type": "main-404", "settings": {} },
+    "suggestions": { "type": "featured-collection", "settings": { "heading": "Novidades", "layout": "carousel", "limit": 8 } }
+  },
+  "order": ["main", "suggestions"]
+}

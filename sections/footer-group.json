@@ -1,0 +1,23 @@
+{
+  "type": "footer",
+  "name": "Rodapé",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "menu1": { "type": "menu", "settings": { "title": "Institucional", "menu": "footer" } },
+        "menu2": { "type": "menu", "settings": { "title": "Ajuda", "menu": "footer" } },
+        "text1": {
+          "type": "text",
+          "settings": {
+            "title": "Atendimento",
+            "text": "<p>Atendimento sobre o seu pedido ou devolução.</p><p>Segunda a sexta, das 8h às 18h.</p>"
+          }
+        }
+      },
+      "block_order": ["menu1", "menu2", "text1"],
+      "settings": {}
+    }
+  },
+  "order": ["footer"]
+}
