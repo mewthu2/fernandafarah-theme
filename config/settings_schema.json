@@ -174,10 +174,22 @@
         "id": "card_image_ratio",
         "label": "Proporção da imagem",
         "options": [
-          { "value": "portrait", "label": "Retrato (2:3)" },
-          { "value": "tall", "label": "Retrato alto (3:4)" },
-          { "value": "square", "label": "Quadrado" },
-          { "value": "adapt", "label": "Original" }
+          {
+            "value": "portrait",
+            "label": "Retrato (2:3)"
+          },
+          {
+            "value": "tall",
+            "label": "Retrato alto (3:4)"
+          },
+          {
+            "value": "square",
+            "label": "Quadrado"
+          },
+          {
+            "value": "adapt",
+            "label": "Original"
+          }
         ],
         "default": "portrait"
       },
@@ -211,6 +223,29 @@
         "id": "new_tag",
         "label": "Tag para selo \"Novo\"",
         "default": "novo"
+      },
+      {
+        "type": "header",
+        "content": "Vídeo do produto"
+      },
+      {
+        "type": "text",
+        "id": "product_video_metafield",
+        "label": "Metacampo de vídeo",
+        "default": "custom.video",
+        "info": "Formato namespace.chave. Aceita arquivo de vídeo, lista de arquivos ou URL de MP4."
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_video",
+        "label": "Mostrar vídeo no lugar da primeira foto do card",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "product_page_video",
+        "label": "Mostrar vídeo como primeira mídia na página do produto",
+        "default": true
       }
     ]
   },
@@ -270,8 +305,14 @@
         "id": "cart_type",
         "label": "Tipo de carrinho",
         "options": [
-          { "value": "drawer", "label": "Sacola lateral" },
-          { "value": "page", "label": "Página" }
+          {
+            "value": "drawer",
+            "label": "Sacola lateral"
+          },
+          {
+            "value": "page",
+            "label": "Página"
+          }
         ],
         "default": "drawer"
       },
@@ -298,12 +339,42 @@
   {
     "name": "Redes sociais",
     "settings": [
-      { "type": "text", "id": "social_instagram", "label": "Instagram", "placeholder": "https://instagram.com/" },
-      { "type": "text", "id": "social_facebook", "label": "Facebook", "placeholder": "https://facebook.com/" },
-      { "type": "text", "id": "social_tiktok", "label": "TikTok", "placeholder": "https://tiktok.com/@" },
-      { "type": "text", "id": "social_pinterest", "label": "Pinterest", "placeholder": "https://pinterest.com/" },
-      { "type": "text", "id": "social_youtube", "label": "YouTube", "placeholder": "https://youtube.com/" },
-      { "type": "text", "id": "social_spotify", "label": "Spotify", "placeholder": "https://open.spotify.com/" },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram",
+        "placeholder": "https://instagram.com/"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook",
+        "placeholder": "https://facebook.com/"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok",
+        "placeholder": "https://tiktok.com/@"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest",
+        "placeholder": "https://pinterest.com/"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube",
+        "placeholder": "https://youtube.com/"
+      },
+      {
+        "type": "text",
+        "id": "social_spotify",
+        "label": "Spotify",
+        "placeholder": "https://open.spotify.com/"
+      },
       {
         "type": "text",
         "id": "whatsapp_number",

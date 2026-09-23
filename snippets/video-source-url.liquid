@@ -1,0 +1,48 @@
+{% doc %}
+  Outputs a playable MP4 URL for a single video metafield value, or nothing.
+  Accepts a Shopify video file, a generic file or a URL string. YouTube and Vimeo are skipped.
+
+  @param {object} value - Video object, generic file or URL string
+  @param {number} [max_height] - Preferred max video height, defaults to 720
+
+  @example
+  {% render 'video-source-url', value: value, max_height: 720 %}
+{% enddoc %}
+
+{%- liquid
+  assign max_height = max_height | default: 720
+  assign best_url = ''
+
+  if value.sources
+    assign best_height = 0
+    assign fallback_url = ''
+    for source in value.sources
+      if source.format == 'mp4'
+        if fallback_url == ''
+          assign fallback_url = source.url
+        endif
+        if source.height <= max_height and source.height > best_height
+          assign best_url = source.url
+          assign best_height = source.height
+        endif
+      endif
+    endfor
+    if best_url == ''
+      assign best_url = fallback_url
+    endif
+  elsif value.url
+    assign best_url = value.url
+  else
+    assign url = value | append: '' | strip
+    assign url_down = url | downcase
+    assign is_embed = false
+    if url_down contains 'youtube.com' or url_down contains 'youtu.be' or url_down contains 'vimeo.com'
+      assign is_embed = true
+    endif
+    if url != blank and is_embed == false
+      assign best_url = url
+    endif
+  endif
+
+  echo best_url
+-%}

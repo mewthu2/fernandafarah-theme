@@ -1,0 +1,132 @@
+{% doc %}
+  Renders one product row of the "Shop the look" section with its own option picker and add to cart.
+
+  @param {product} product - The look product
+  @param {string} uid - Unique id prefix for inputs
+  @param {boolean} [is_current] - Whether this is the product being viewed
+
+  @example
+  {% render 'look-item', product: product, uid: 'look-1' %}
+{% enddoc %}
+
+{%- liquid
+  assign color_names = settings.card_color_option_name | downcase | split: ','
+  assign preset = product.selected_or_first_available_variant
+  assign needs_choice = false
+-%}
+
+<li class="look-item{% unless product.available %} is-soldout{% endunless %}" data-look-item data-product-id="{{ product.id }}">
+  <a href="{{ product.url }}" class="look-item__media">
+    {%- if product.featured_media -%}
+      {{ product.featured_media | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '120px', widths: '200, 300, 400', class: 'look-item__img', alt: product.featured_media.alt }}
+    {%- else -%}
+      {{ 'product-apparel-1' | placeholder_svg_tag: 'look-item__img placeholder' }}
+    {%- endif -%}
+  </a>
+
+  <div class="look-item__info">
+    <div class="look-item__head">
+      <a href="{{ product.url }}" class="look-item__title">{{ product.title | escape }}</a>
+      {%- if is_current -%}
+        <span class="look-item__tag">{{ 'products.look.viewing' | t }}</span>
+      {%- endif -%}
+    </div>
+    <div class="look-item__price" data-look-price>
+      {% render 'price', product: product, variant: preset %}
+    </div>
+
+    {%- if product.available -%}
+      {%- unless product.has_only_default_variant -%}
+        <div class="look-item__options">
+          {%- for option in product.options_with_values -%}
+            {%- liquid
+              assign option_down = option.name | downcase | strip
+              assign is_color = false
+              for name in color_names
+                assign trimmed = name | strip
+                if trimmed == option_down
+                  assign is_color = true
+                endif
+              endfor
+              assign preselect = false
+              if is_color or option.values.size == 1
+                assign preselect = true
+              else
+                assign needs_choice = true
+              endif
+            -%}
+            <fieldset class="look-item__option{% if is_color %} look-item__option--color{% endif %}" data-look-option>
+              <legend class="visually-hidden">{{ option.name }}</legend>
+              {%- for value in option.values -%}
+                {%- liquid
+                  assign input_id = uid | append: '-' | append: option.position | append: '-' | append: forloop.index0
+                  assign swatch_style = ''
+                  if is_color
+                    if value.swatch.image
+                      assign swatch_img_url = value.swatch.image | image_url: width: 60
+                      assign swatch_style = 'background-image: url(' | append: swatch_img_url | append: ')'
+                    elsif value.swatch.color
+                      assign swatch_style = 'background-color: ' | append: value.swatch.color
+                    else
+                      capture swatch_color
+                        render 'swatch-color', name: value
+                      endcapture
+                      assign swatch_color = swatch_color | strip
+                      assign swatch_style = 'background-color: ' | append: swatch_color
+                    endif
+                  endif
+                -%}
+                <input
+                  type="radio"
+                  class="visually-hidden"
+                  id="{{ input_id }}"
+                  name="{{ uid }}-{{ option.position }}"
+                  value="{{ value | escape }}"
+                  {% if preselect and value.selected %}
+                    checked
+                  {% endif %}
+                >
+                <label
+                  for="{{ input_id }}"
+                  class="{% if is_color %}swatch{% else %}size-pill size-pill--sm{% endif %}{% unless value.available %} is-unavailable{% endunless %}"
+                  {% if is_color %}
+                    style="{{ swatch_style }}" title="{{ value | escape }}"
+                  {% endif %}
+                >
+                  {%- if is_color -%}
+                    <span class="visually-hidden">{{ value }}</span>
+                  {%- else -%}
+                    {{ value }}
+                  {%- endif -%}
+                </label>
+              {%- endfor -%}
+            </fieldset>
+          {%- endfor -%}
+        </div>
+      {%- endunless -%}
+    {%- endif -%}
+
+    <button
+      type="button"
+      class="look-item__add"
+      data-look-add
+      {% if needs_choice == false %}
+        data-variant-id="{{ preset.id }}"
+      {% endif %}
+      {% unless product.available %}
+        disabled
+      {% endunless %}
+    >
+      {%- if product.available == false -%}
+        {{ 'products.product.sold_out' | t }}
+      {%- elsif needs_choice -%}
+        {{ 'products.look.choose_size' | t }}
+      {%- else -%}
+        {{ 'products.product.add_to_cart' | t }}
+      {%- endif -%}
+    </button>
+    <script type="application/json" data-look-variants>
+      {{ product.variants | json }}
+    </script>
+  </div>
+</li>

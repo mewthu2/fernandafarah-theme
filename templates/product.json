@@ -3,11 +3,34 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "title": { "type": "title", "settings": { "show_sku": true } },
-        "price": { "type": "price", "settings": {} },
-        "picker": { "type": "variant_picker", "settings": {} },
-        "buy": { "type": "buy_buttons", "settings": { "show_dynamic_checkout": false, "note": "Troca grátis em até 15 dias" } },
-        "description": { "type": "description", "settings": { "title": "Descrição", "open": true } },
+        "title": {
+          "type": "title",
+          "settings": {
+            "show_sku": true
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "picker": {
+          "type": "variant_picker",
+          "settings": {}
+        },
+        "buy": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false,
+            "note": "Troca grátis em até 15 dias"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "title": "Descrição",
+            "open": true
+          }
+        },
         "care": {
           "type": "collapsible",
           "settings": {
@@ -21,15 +44,49 @@
             "title": "Entrega e trocas",
             "content": "<p>Enviamos para todo o Brasil. A primeira troca é grátis em até 15 dias após o recebimento.</p>"
           }
+        },
+        "look": {
+          "type": "look_link",
+          "settings": {
+            "metafield": "custom.compre_junto"
+          }
         }
       },
-      "block_order": ["title", "price", "picker", "buy", "description", "care", "shipping"],
-      "settings": { "gallery_layout": "grid" }
+      "block_order": [
+        "title",
+        "price",
+        "picker",
+        "buy",
+        "look",
+        "description",
+        "care",
+        "shipping"
+      ],
+      "settings": {
+        "gallery_layout": "grid"
+      }
     },
     "related": {
       "type": "related-products",
-      "settings": { "heading": "Você também pode gostar", "intent": "related", "limit": 8, "columns": 4 }
+      "settings": {
+        "heading": "Você também pode gostar",
+        "intent": "related",
+        "limit": 8,
+        "columns": 4
+      }
+    },
+    "look": {
+      "type": "shop-the-look",
+      "settings": {
+        "metafield": "custom.compre_junto",
+        "heading": "Compre o look",
+        "subheading": "Complete sua produção"
+      }
     }
   },
-  "order": ["main", "related"]
+  "order": [
+    "main",
+    "look",
+    "related"
+  ]
 }

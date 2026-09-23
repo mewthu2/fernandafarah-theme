@@ -1,0 +1,28 @@
+{% doc %}
+  Outputs the handles of products linked in the "shop the look" metafield, separated by commas.
+  Supports product_reference and list.product_reference metafields.
+
+  @param {product} product - The product
+  @param {string} metafield - Metafield in namespace.key format
+
+  @example
+  {% render 'look-products', product: product, metafield: 'custom.compre_junto' %}
+{% enddoc %}
+
+{%- liquid
+  assign parts = metafield | strip | split: '.'
+  if parts.size == 2
+    assign mf = product.metafields[parts[0]][parts[1]]
+    if mf != blank
+      if mf.type contains 'list.'
+        for item in mf.value
+          if item.handle != blank and item.handle != product.handle
+            echo item.handle | append: ','
+          endif
+        endfor
+      elsif mf.value.handle != blank and mf.value.handle != product.handle
+        echo mf.value.handle | append: ','
+      endif
+    endif
+  endif
+-%}

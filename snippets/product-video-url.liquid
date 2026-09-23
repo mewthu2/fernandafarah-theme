@@ -1,0 +1,46 @@
+{% doc %}
+  Outputs playable MP4 URL(s) from the product video metafield configured in theme settings.
+  By default outputs only the first URL. With all: true, outputs every URL separated by spaces.
+
+  @param {product} product - The product
+  @param {number} [max_height] - Preferred max video height, defaults to 720
+  @param {boolean} [all] - Output all video URLs separated by spaces
+
+  @example
+  {% render 'product-video-url', product: product, all: true %}
+{% enddoc %}
+
+{%- liquid
+  assign parts = settings.product_video_metafield | strip | split: '.'
+  assign mf = nil
+  if parts.size == 2
+    assign mf = product.metafields[parts[0]][parts[1]]
+  endif
+
+  assign urls = ''
+  if mf != blank
+    if mf.type contains 'list.'
+      for value in mf.value
+        capture u
+          render 'video-source-url', value: value, max_height: max_height
+        endcapture
+        assign u = u | strip
+        if u != blank
+          assign urls = urls | append: u | append: ' '
+        endif
+      endfor
+    else
+      capture u
+        render 'video-source-url', value: mf.value, max_height: max_height
+      endcapture
+      assign urls = u | strip
+    endif
+  endif
+
+  assign urls = urls | strip
+  if all
+    echo urls
+  else
+    echo urls | split: ' ' | first
+  endif
+-%}

@@ -50,12 +50,34 @@
     endfor
   endif
   assign card_url = product.url
+
+  assign card_video_url = ''
+  if settings.card_show_video
+    capture card_video_url
+      render 'product-video-url', product: product
+    endcapture
+    assign card_video_url = card_video_url | strip
+  endif
 -%}
 
 <article class="card" data-product-card>
   <div class="card__media">
     <a href="{{ card_url }}" class="card__link" tabindex="-1" aria-hidden="true">
-      {%- if product.featured_media -%}
+      {%- if card_video_url != blank -%}
+        <video
+          class="card__img card__img--primary card__video"
+          data-card-video
+          data-src="{{ card_video_url }}"
+          {% if product.featured_media %}
+            poster="{{ product.featured_media | image_url: width: 600 }}"
+          {% endif %}
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label="{{ product.title | escape }}"
+        ></video>
+      {%- elsif product.featured_media -%}
         {{
           product.featured_media
           | image_url: width: 900
@@ -67,7 +89,7 @@
             alt: product.featured_media.alt,
             data-card-image: ''
         }}
-        {%- if settings.card_show_second_image and product.media.size > 1 -%}
+        {%- if settings.card_show_second_image and product.media.size > 1 and card_video_url == blank -%}
           {{
             product.media[1]
             | image_url: width: 900

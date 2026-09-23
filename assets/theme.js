@@ -265,7 +265,7 @@
     });
   };
 
-  const addToCart = async (items, button) => {
+  const addToCart = async (items, button, { openCart = true } = {}) => {
     button?.classList.add('is-loading');
     try {
       const res = await fetch(`${theme.routes.cartAdd}.js`, {
@@ -275,12 +275,13 @@
       });
       const data = await res.json();
       if (!res.ok || data.status) throw new Error(data.description || data.message || theme.strings.error);
-      if (theme.cartType === 'page') {
+      if (theme.cartType === 'page' && openCart) {
         window.location.href = theme.routes.cart;
         return true;
       }
       renderCart(data.sections);
-      openDrawer($('[data-cart-drawer]'));
+      if (openCart) openDrawer($('[data-cart-drawer]'));
+      else toast(theme.strings.added);
       return true;
     } catch (err) {
       toast(err.message || theme.strings.error);
@@ -362,6 +363,51 @@
   });
 
   /* Product page */
+  const getSelected = (fieldsets) => fieldsets.map((fs) => $('input:checked', fs)?.value);
+
+  const checkOptions = (fieldsets, selected) => {
+    fieldsets.forEach((fs, i) => {
+      $$('input[type="radio"]', fs).forEach((input) => {
+        input.checked = input.value === selected[i];
+      });
+      const label = $('[data-selected-value]', fs);
+      if (label) label.textContent = selected[i] || '';
+    });
+  };
+
+  const updateFromDoc = (product, doc) => {
+    ['[data-price]', '[data-sku]', '[data-vs-price]'].forEach((sel) => {
+      const fresh = $(sel, doc);
+      $$(sel, product).forEach((current) => {
+        if (fresh) current.innerHTML = fresh.innerHTML;
+      });
+    });
+    $$('label[for]', product).forEach((label) => {
+      const freshLabel = doc.querySelector(`label[for="${CSS.escape(label.htmlFor)}"]`);
+      if (freshLabel) label.classList.toggle('is-unavailable', freshLabel.classList.contains('is-unavailable'));
+    });
+    ['[data-add-button]', '[data-vs-add]'].forEach((sel) => {
+      const fresh = $(sel, doc);
+      const current = $(sel, product);
+      if (fresh && current) {
+        current.disabled = fresh.disabled;
+        current.textContent = fresh.textContent.trim();
+      }
+    });
+    const freshPayment = $('.shopify-payment-button', doc);
+    const payment = $('.shopify-payment-button', product);
+    if (freshPayment && payment) payment.replaceWith(freshPayment);
+  };
+
+  const setButtons = (product, available, text) => {
+    ['[data-add-button]', '[data-vs-add]'].forEach((sel) => {
+      const btn = $(sel, product);
+      if (!btn) return;
+      btn.disabled = !available;
+      btn.textContent = text;
+    });
+  };
+
   const initProduct = (root = document) => {
     $$('[data-product]', root).forEach((product) => {
       if (product._init) return;
@@ -394,10 +440,12 @@
         dialog.addEventListener('click', () => dialog.close());
       }
 
-      const picker = $('[data-variant-picker]', product);
-      if (!picker) return;
-      const variantsEl = $('[data-variants]', picker);
+      const variantsEl = $('[data-variants]', product);
       const variants = variantsEl ? JSON.parse(variantsEl.textContent) : [];
+      const mainSets = $$('[data-variant-picker] fieldset', product);
+      const storySets = $$('[data-vs-options] fieldset', product);
+      const idInput = $('[data-variant-id]', product);
+      product._variantId = parseInt(idInput?.value || $('[data-vstories]', product)?.dataset.variantId, 10) || null;
 
       const scrollToMedia = (mediaId) => {
         if (!mediaId || !mediaList) return;
@@ -415,58 +463,286 @@
         }
       };
 
-      picker.addEventListener('change', async () => {
-        const selected = $$('fieldset', picker).map((fs) => $('input:checked', fs)?.value);
-        $$('fieldset', picker).forEach((fs, i) => {
-          const label = $('[data-selected-value]', fs);
-          if (label) label.textContent = selected[i] || '';
-        });
+      const selectVariant = async (selected) => {
+        checkOptions(mainSets, selected);
+        checkOptions(storySets, selected);
         const variant = variants.find((v) => v.options.every((opt, i) => opt === selected[i]));
-        const button = $('[data-add-button]', product);
-        const idInput = $('[data-variant-id]', product);
-
         if (!variant) {
-          if (button) {
-            button.disabled = true;
-            button.textContent = theme.strings.unavailable;
-          }
+          product._variantId = null;
+          setButtons(product, false, theme.strings.unavailable);
           return;
         }
-
+        product._variantId = variant.id;
         if (idInput) idInput.value = variant.id;
         const url = `${productUrl}?variant=${variant.id}`;
         window.history.replaceState({}, '', url);
         if (variant.featured_media) scrollToMedia(variant.featured_media.id);
-
         try {
           const res = await fetch(`${url}&section_id=${sectionId}`);
-          const doc = parseHTML(await res.text());
-          ['[data-price]', '[data-sku]'].forEach((sel) => {
-            const fresh = $(sel, doc);
-            const current = $(sel, product);
-            if (fresh && current) current.innerHTML = fresh.innerHTML;
-          });
-          const freshPicker = $('[data-variant-picker]', doc);
-          if (freshPicker) {
-            $$('label', picker).forEach((label) => {
-              const freshLabel = $(`label[for="${label.htmlFor}"]`, freshPicker);
-              if (freshLabel) label.classList.toggle('is-unavailable', freshLabel.classList.contains('is-unavailable'));
-            });
-          }
-          const freshButton = $('[data-add-button]', doc);
-          if (freshButton && button) {
-            button.disabled = freshButton.disabled;
-            button.textContent = freshButton.textContent.trim();
-          }
-          const freshPayment = $('.shopify-payment-button', doc);
-          const payment = $('.shopify-payment-button', product);
-          if (freshPayment && payment) payment.replaceWith(freshPayment);
+          updateFromDoc(product, parseHTML(await res.text()));
         } catch (err) {
-          if (button) {
-            button.disabled = !variant.available;
-            button.textContent = variant.available ? theme.strings.addToCart : theme.strings.soldOut;
-          }
+          setButtons(product, variant.available, variant.available ? theme.strings.addToCart : theme.strings.soldOut);
         }
+      };
+
+      const picker = $('[data-variant-picker]', product);
+      picker?.addEventListener('change', () => selectVariant(getSelected(mainSets)));
+      $('[data-vs-options]', product)?.addEventListener('change', () => selectVariant(getSelected(storySets)));
+
+      $('[data-vs-add]', product)?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        if (!product._variantId) return;
+        const label = btn.textContent;
+        const ok = await addToCart([{ id: product._variantId, quantity: 1 }], btn, { openCart: false });
+        if (ok) {
+          btn.textContent = theme.strings.added;
+          setTimeout(() => {
+            btn.textContent = label;
+          }, 2000);
+        }
+      });
+
+      initStories(product);
+    });
+  };
+
+  /* Video stories */
+  const initStories = (root) => {
+    const wrap = $('[data-vstories]', root);
+    if (!wrap || wrap._init) return;
+    wrap._init = true;
+    const dialog = $('[data-vstories-dialog]', wrap);
+    const videos = $$('.vstories__video', wrap);
+    const bars = $$('.vstories__bar i', wrap);
+    const muteBtn = $('[data-vs-mute]', wrap);
+    let index = 0;
+    let muted = false;
+    let holdTimer = null;
+    let held = false;
+
+    const setMuted = (value) => {
+      muted = value;
+      videos.forEach((v) => (v.muted = muted));
+      muteBtn?.classList.toggle('is-muted', muted);
+    };
+
+    const play = (video) => {
+      video.muted = muted;
+      video.play().catch(() => {
+        setMuted(true);
+        video.play().catch(() => {});
+      });
+    };
+
+    const go = (i) => {
+      if (i < 0) i = 0;
+      if (i >= videos.length) i = 0;
+      index = i;
+      videos.forEach((v, n) => {
+        const active = n === index;
+        v.classList.toggle('is-active', active);
+        if (active) {
+          if (!v.src) v.src = v.dataset.src;
+          v.currentTime = 0;
+          play(v);
+          const next = videos[n + 1];
+          if (next && !next.src) {
+            next.preload = 'metadata';
+            next.src = next.dataset.src;
+          }
+        } else {
+          v.pause();
+        }
+      });
+      bars.forEach((bar, n) => {
+        bar.style.transform = `scaleX(${n < index ? 1 : 0})`;
+      });
+    };
+
+    videos.forEach((v, n) => {
+      v.addEventListener('timeupdate', () => {
+        if (n === index && v.duration) bars[n].style.transform = `scaleX(${v.currentTime / v.duration})`;
+      });
+      v.addEventListener('ended', () => {
+        if (n === index) go(index + 1);
+      });
+    });
+
+    const open = () => {
+      dialog.showModal();
+      document.body.classList.add('is-locked');
+      $('.vstories__bubble-video', wrap)?.pause();
+      go(0);
+    };
+
+    const close = () => {
+      videos.forEach((v) => v.pause());
+      if (dialog.open) dialog.close();
+    };
+
+    dialog.addEventListener('close', () => {
+      videos.forEach((v) => v.pause());
+      document.body.classList.remove('is-locked');
+      $('.vstories__bubble-video', wrap)?.play().catch(() => {});
+    });
+
+    $('[data-vstories-open]', wrap).addEventListener('click', open);
+    $('[data-vs-close]', wrap)?.addEventListener('click', close);
+    $('[data-vs-prev]', wrap)?.addEventListener('click', () => go(index - 1));
+    $('[data-vs-next]', wrap)?.addEventListener('click', () => go(index + 1));
+    muteBtn?.addEventListener('click', () => setMuted(!muted));
+
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) close();
+    });
+
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') go(index + 1);
+      if (e.key === 'ArrowLeft') go(index - 1);
+    });
+
+    $$('[data-vs-tap]', wrap).forEach((tap) => {
+      tap.addEventListener('pointerdown', () => {
+        held = false;
+        holdTimer = setTimeout(() => {
+          held = true;
+          videos[index].pause();
+        }, 250);
+      });
+      const release = () => {
+        clearTimeout(holdTimer);
+        if (held) play(videos[index]);
+      };
+      tap.addEventListener('pointerup', release);
+      tap.addEventListener('pointerleave', release);
+      tap.addEventListener('click', () => {
+        if (held) {
+          held = false;
+          return;
+        }
+        go(index + parseInt(tap.dataset.vsTap, 10));
+      });
+    });
+
+    let startY = null;
+    const frame = $('.vstories__frame', wrap);
+    frame.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+    frame.addEventListener('touchend', (e) => {
+      if (startY !== null && e.changedTouches[0].clientY - startY > 120 && !e.target.closest('.vstories__panel')) close();
+      startY = null;
+    });
+  };
+
+  /* Money */
+  const formatMoney = (cents) => {
+    const format = theme.moneyFormat || 'R$ {{amount_with_comma_separator}}';
+    const value = (Number(cents) || 0) / 100;
+    const fmt = (decimals, thousands, decimal) => {
+      const [int, dec] = value.toFixed(decimals).split('.');
+      const withSep = int.replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
+      return dec ? `${withSep}${decimal}${dec}` : withSep;
+    };
+    return format.replace(/\{\{\s*(\w+)\s*\}\}/, (_, key) => {
+      switch (key) {
+        case 'amount_no_decimals': return fmt(0, ',', '.');
+        case 'amount_with_comma_separator': return fmt(2, '.', ',');
+        case 'amount_no_decimals_with_comma_separator': return fmt(0, '.', ',');
+        case 'amount_with_apostrophe_separator': return fmt(2, "'", '.');
+        default: return fmt(2, ',', '.');
+      }
+    });
+  };
+
+  /* Shop the look */
+  const initLook = (root = document) => {
+    $$('[data-look]', root).forEach((look) => {
+      if (look._init) return;
+      look._init = true;
+      const items = $$('[data-look-item]', look);
+
+      items.forEach((item) => {
+        const variants = JSON.parse($('[data-look-variants]', item)?.textContent || '[]');
+        const sets = $$('[data-look-option]', item);
+        const btn = $('[data-look-add]', item);
+
+        const refresh = () => {
+          const selected = sets.map((fs) => $('input:checked', fs)?.value);
+          sets.forEach((fs, i) => {
+            $$('input', fs).forEach((input) => {
+              const possible = variants.some(
+                (v) => v.available && v.options[i] === input.value && v.options.every((o, n) => n === i || !selected[n] || o === selected[n])
+              );
+              $(`label[for="${CSS.escape(input.id)}"]`, fs)?.classList.toggle('is-unavailable', !possible);
+            });
+          });
+          item.classList.remove('is-missing');
+          if (selected.some((v) => v === undefined)) return;
+          const variant = variants.find((v) => v.options.every((o, i) => o === selected[i]));
+          if (!variant) {
+            btn.removeAttribute('data-variant-id');
+            btn.disabled = true;
+            btn.textContent = theme.strings.unavailable;
+            return;
+          }
+          btn.dataset.variantId = variant.id;
+          btn.disabled = !variant.available;
+          btn.textContent = variant.available ? theme.strings.addToCart : theme.strings.soldOut;
+          const price = $('[data-look-price] .price', item);
+          if (price) {
+            const current = $('.price__current', price);
+            if (current) current.textContent = formatMoney(variant.price);
+            const onSale = variant.compare_at_price > variant.price;
+            price.classList.toggle('price--sale', onSale);
+            let compare = $('.price__compare', price);
+            if (onSale) {
+              if (!compare) {
+                compare = document.createElement('s');
+                compare.className = 'price__compare';
+                $('.price__main', price)?.prepend(compare);
+              }
+              compare.textContent = formatMoney(variant.compare_at_price);
+            } else {
+              compare?.remove();
+              $('.price__off', price)?.remove();
+            }
+          }
+        };
+
+        sets.forEach((fs) => fs.addEventListener('change', refresh));
+        if (sets.length) refresh();
+
+        btn?.addEventListener('click', async () => {
+          if (!btn.dataset.variantId) {
+            item.classList.add('is-missing');
+            return;
+          }
+          const label = btn.textContent;
+          const ok = await addToCart([{ id: parseInt(btn.dataset.variantId, 10), quantity: 1 }], btn);
+          if (ok) {
+            btn.textContent = theme.strings.added;
+            setTimeout(() => (btn.textContent = label), 2000);
+          }
+        });
+      });
+
+      $('[data-look-add-all]', look)?.addEventListener('click', async (e) => {
+        const button = e.currentTarget;
+        const hint = $('[data-look-hint]', look);
+        const buttons = items.map((item) => $('[data-look-add]', item)).filter((b) => b && !b.disabled);
+        const missing = items.filter((item) => {
+          const b = $('[data-look-add]', item);
+          return b && !b.disabled && !b.dataset.variantId;
+        });
+        if (missing.length) {
+          missing.forEach((item) => item.classList.add('is-missing'));
+          if (hint) hint.hidden = false;
+          missing[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        if (hint) hint.hidden = true;
+        const lineItems = buttons.map((b) => ({ id: parseInt(b.dataset.variantId, 10), quantity: 1 }));
+        if (!lineItems.length) return;
+        await addToCart(lineItems, button);
       });
     });
   };
@@ -575,6 +851,43 @@
     $$('.swatch', card).forEach((s) => s.classList.toggle('is-active', s === swatch));
   });
 
+  /* Card videos */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const videoObserver =
+    'IntersectionObserver' in window
+      ? new IntersectionObserver(
+          (entries) => {
+            entries.forEach(({ target: video, isIntersecting }) => {
+              if (isIntersecting) {
+                if (!video.src && video.dataset.src) video.src = video.dataset.src;
+                if (!reduceMotion) video.play().catch(() => {});
+              } else if (!video.paused) {
+                video.pause();
+              }
+            });
+          },
+          { rootMargin: '200px 0px', threshold: 0.1 }
+        )
+      : null;
+
+  const initCardVideos = (root = document) => {
+    $$('[data-card-video]', root).forEach((video) => {
+      if (video._init) return;
+      video._init = true;
+      video.muted = true;
+      if (videoObserver) videoObserver.observe(video);
+      else if (video.dataset.src) video.src = video.dataset.src;
+    });
+  };
+
+  new MutationObserver((mutations) => {
+    mutations.forEach((m) =>
+      m.addedNodes.forEach((node) => {
+        if (node.nodeType === 1) initCardVideos(node.matches?.('[data-card-video]') ? node.parentNode : node);
+      })
+    );
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
   /* Account recover password */
   document.addEventListener('click', (e) => {
     const toggle = e.target.closest('[data-toggle-recover]');
@@ -585,6 +898,8 @@
   });
 
   const init = (root = document) => {
+    initCardVideos(root);
+    initLook(root);
     initAnnouncement(root);
     initCountdown(root);
     initSlideshows(root);

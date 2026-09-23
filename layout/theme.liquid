@@ -41,12 +41,15 @@
           predictiveSearch: {{ routes.predictive_search_url | json }}
         },
         cartType: {{ settings.cart_type | json }},
+        moneyFormat: {{ shop.money_format | json }},
         strings: {
           addToCart: {{ 'products.product.add_to_cart' | t | json }},
           soldOut: {{ 'products.product.sold_out' | t | json }},
           unavailable: {{ 'products.product.unavailable' | t | json }},
           added: {{ 'products.product.added' | t | json }},
-          error: {{ 'general.error' | t | json }}
+          error: {{ 'general.error' | t | json }},
+          chooseSize: {{ 'products.look.choose_size' | t | json }},
+          lookAdded: {{ 'products.look.added_all' | t | json }}
         }
       };
     </script>

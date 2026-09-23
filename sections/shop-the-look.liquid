@@ -1,0 +1,98 @@
+{%- liquid
+  capture look_handles
+    render 'look-products', product: product, metafield: section.settings.metafield
+  endcapture
+  assign look_handles = look_handles | strip | split: ','
+  assign look_image = nil
+  assign media_index = section.settings.image_index | minus: 1
+  if product.media.size > media_index
+    assign look_image = product.media[media_index]
+  else
+    assign look_image = product.featured_media
+  endif
+-%}
+
+{%- if look_handles.size > 0 -%}
+  <div
+    class="look section-spacing{% if section.settings.show_image == false or look_image == nil %} look--no-image{% endif %}"
+    id="CompreOLook"
+    data-look
+    style="--banner-mt: {{ section.settings.margin_top }}px; --banner-mb: {{ section.settings.margin_bottom }}px;"
+  >
+    <div class="look__inner page-width">
+      {%- if section.settings.show_image and look_image -%}
+        <div class="look__media">
+          {{ look_image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 45vw, 100vw', widths: '500, 750, 1000, 1400', class: 'look__img' }}
+        </div>
+      {%- endif -%}
+
+      <div class="look__content">
+        <div class="look__header">
+          {%- if section.settings.subheading != blank -%}
+            <p class="eyebrow">{{ section.settings.subheading }}</p>
+          {%- endif -%}
+          <h2 class="look__title">{{ section.settings.heading }}</h2>
+        </div>
+
+        <ul class="look__list" role="list">
+          {%- if section.settings.include_current -%}
+            {% render 'look-item', product: product, uid: 'look-current', is_current: true %}
+          {%- endif -%}
+          {%- for handle in look_handles limit: 8 -%}
+            {%- assign look_product = all_products[handle] -%}
+            {%- if look_product != blank -%}
+              {%- assign uid = 'look-' | append: forloop.index -%}
+              {% render 'look-item', product: look_product, uid: uid %}
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+
+        {%- if section.settings.show_add_all -%}
+          <div class="look__footer">
+            <p class="look__hint" data-look-hint hidden>{{ 'products.look.choose_all' | t }}</p>
+            <button type="button" class="button button--full" data-look-add-all>{{ 'products.look.add_all' | t }}</button>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Compre o look",
+  "class": "section-look",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "metafield",
+      "label": "Metacampo com os produtos do look",
+      "info": "Formato namespace.chave. Tipo: referência de produto (lista).",
+      "default": "custom.compre_junto"
+    },
+    { "type": "text", "id": "subheading", "label": "Subtítulo", "default": "Complete sua produção" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Compre o look" },
+    { "type": "checkbox", "id": "include_current", "label": "Incluir o produto atual na lista", "default": true },
+    { "type": "checkbox", "id": "show_add_all", "label": "Mostrar botão \"Adicionar look completo\"", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Mostrar foto do look", "default": true },
+    {
+      "type": "range",
+      "id": "image_index",
+      "label": "Foto do produto usada como foto do look",
+      "info": "1 = primeira foto do produto, 2 = segunda...",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    { "type": "range", "id": "margin_top", "label": "Espaço acima", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "margin_bottom", "label": "Espaço abaixo", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "presets": [
+    { "name": "Compre o look" }
+  ]
+}
+{% endschema %}

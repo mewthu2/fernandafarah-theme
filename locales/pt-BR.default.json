@@ -68,6 +68,20 @@
       "size_guide": "Guia de medidas",
       "sku": "Ref",
       "zoom": "Ampliar imagem"
+    },
+    "stories": {
+      "open": "Ver vídeos do produto",
+      "title": "Vídeos de {{ product }}",
+      "sound": "Ativar ou desativar som"
+    },
+    "look": {
+      "title": "Compre o look",
+      "viewing": "Você está vendo",
+      "choose_size": "Selecione o tamanho",
+      "choose_all": "Selecione o tamanho de todas as peças",
+      "add_all": "Adicionar look completo",
+      "added_all": "Look adicionado à sacola",
+      "see_look": "Ver o look completo"
     }
   },
   "collections": {

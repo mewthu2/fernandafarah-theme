@@ -6,12 +6,15 @@
 
   assign video_value = nil
   assign video_url = nil
-  assign video_mf_parts = section.settings.video_metafield | strip | split: '.'
-  if video_mf_parts.size == 2
+  assign video_mf_parts = settings.product_video_metafield | strip | split: '.'
+  if settings.product_page_video and video_mf_parts.size == 2
     assign video_mf = product.metafields[video_mf_parts[0]][video_mf_parts[1]]
     if video_mf != blank
       if video_mf.type contains 'list.'
-        assign video_value = video_mf.value | first
+        for item in video_mf.value
+          assign video_value = item
+          break
+        endfor
       else
         assign video_value = video_mf.value
       endif
@@ -280,12 +283,44 @@
           {%- when 'text' -%}
             <div class="product__text rte" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
 
+          {%- when 'look_link' -%}
+            {%- liquid
+              capture link_handles
+                render 'look-products', product: product, metafield: block.settings.metafield
+              endcapture
+              assign link_handles = link_handles | strip | split: ','
+            -%}
+            {%- if link_handles.size > 0 -%}
+              <a href="#CompreOLook" class="look-link" {{ block.shopify_attributes }}>
+                <span class="look-link__thumbs">
+                  {%- if product.featured_media -%}
+                    {{ product.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '', class: 'look-link__thumb' }}
+                  {%- endif -%}
+                  {%- for handle in link_handles limit: 3 -%}
+                    {%- assign lp = all_products[handle] -%}
+                    {%- if lp.featured_media -%}
+                      {{ lp.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '', class: 'look-link__thumb' }}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </span>
+                <span class="look-link__text">
+                  <b>{{ block.settings.title }}</b>
+                  <small>{{ 'products.look.see_look' | t }} ({{ link_handles.size | plus: 1 }})</small>
+                </span>
+                {% render 'icon', icon: 'arrow-right' %}
+              </a>
+            {%- endif -%}
+
           {%- when 'custom_liquid' -%}
             <div {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
         {%- endcase -%}
       {%- endfor -%}
     </div>
   </div>
+
+  {%- if section.settings.show_video_stories -%}
+    {% render 'video-stories', product: product, current_variant: current_variant, section_id: section.id, position: section.settings.stories_position %}
+  {%- endif -%}
 </section>
 
 <dialog class="zoom-dialog" data-zoom-dialog>
@@ -313,11 +348,25 @@
       "default": "grid"
     },
     {
-      "type": "text",
-      "id": "video_metafield",
-      "label": "Metacampo de vídeo",
-      "info": "Formato namespace.chave. O vídeo aparece como primeira mídia da galeria. Aceita arquivo de vídeo, lista de arquivos ou URL (MP4, YouTube, Vimeo).",
-      "default": "custom.video"
+      "type": "header",
+      "content": "Stories de vídeo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_video_stories",
+      "label": "Mostrar bolinha de vídeo (estilo stories)",
+      "info": "Usa os vídeos do metacampo configurado em Configurações do tema > Cards de produto.",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "stories_position",
+      "label": "Posição da bolinha",
+      "options": [
+        { "value": "left", "label": "Inferior esquerda" },
+        { "value": "right", "label": "Inferior direita" }
+      ],
+      "default": "left"
     }
   ],
   "blocks": [
@@ -375,6 +424,21 @@
       "name": "Texto",
       "settings": [
         { "type": "richtext", "id": "text", "label": "Texto", "default": "<p>Texto</p>" }
+      ]
+    },
+    {
+      "type": "look_link",
+      "name": "Atalho Compre o look",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Compre o look" },
+        {
+          "type": "text",
+          "id": "metafield",
+          "label": "Metacampo com os produtos do look",
+          "default": "custom.compre_junto",
+          "info": "Leva até a seção \"Compre o look\" abaixo do produto."
+        }
       ]
     },
     {
