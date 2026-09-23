@@ -232,6 +232,7 @@
     "story": {
       "type": "image-with-text",
       "settings": {
+        "image": "shopify://shop_images/5AC14847-DC96-4376-B243-425D5EC0E9B7.jpg",
         "image_right": false,
         "subheading": "Nossa essência",
         "heading": "Moda que atravessa o tempo",
