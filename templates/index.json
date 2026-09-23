@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -6,12 +15,16 @@
         "slide1": {
           "type": "slide",
           "settings": {
-            "heading": "Galeria Botânica",
+            "image": "shopify://shop_images/DESK_-_New_in.png",
+            "image_mobile": "shopify://shop_images/MOB_-_New_in.png",
+            "video_url": "",
+            "video_url_mobile": "",
             "subheading": "Nova coleção",
+            "heading": "Galeria Botânica",
             "button_label": "DESCUBRA",
             "link": "shopify://collections/all",
             "button_style": "outline-light",
-            "text_color": "#FFFFFF",
+            "text_color": "#ffffff",
             "position": "middle-right",
             "position_mobile": "bottom",
             "alignment": "center"
@@ -20,19 +33,24 @@
         "slide2": {
           "type": "slide",
           "settings": {
-            "heading": "Sale",
+            "video_url": "",
+            "video_url_mobile": "",
             "subheading": "Até 50% OFF",
+            "heading": "Sale",
             "button_label": "COMPRE AGORA",
             "link": "shopify://collections/all",
             "button_style": "outline-light",
-            "text_color": "#FFFFFF",
+            "text_color": "#ffffff",
             "position": "middle-left",
             "position_mobile": "bottom",
             "alignment": "center"
           }
         }
       },
-      "block_order": ["slide1", "slide2"],
+      "block_order": [
+        "slide1",
+        "slide2"
+      ],
       "settings": {
         "height": "full",
         "autoplay": true,
@@ -44,8 +62,10 @@
       "type": "featured-collection",
       "settings": {
         "heading": "Novidades",
-        "layout": "carousel",
+        "text": "",
+        "collection": "",
         "limit": 12,
+        "layout": "carousel",
         "columns": 4,
         "show_view_all": true,
         "margin_top": 48,
@@ -55,27 +75,56 @@
     "banner_main": {
       "type": "image-banner",
       "settings": {
-        "heading": "Detalhes",
-        "button_label": "SHOP NOW",
+        "video_url": "",
+        "video_url_mobile": "",
         "link": "shopify://collections/all",
-        "position": "bottom-center",
         "width": "full",
         "margin_top": 0,
-        "margin_bottom": 4
+        "margin_bottom": 4,
+        "subheading": "",
+        "heading": "Detalhes",
+        "text": "",
+        "button_label": "SHOP NOW",
+        "button_style": "outline-light",
+        "text_color": "#ffffff",
+        "position": "bottom-center",
+        "position_mobile": "bottom",
+        "alignment": "center"
       }
     },
     "duo": {
       "type": "banner-grid",
       "blocks": {
-        "b1": { "type": "banner", "settings": { "heading": "Conjuntos", "button_label": "Shop now", "link": "shopify://collections/all" } },
-        "b2": { "type": "banner", "settings": { "heading": "Fluidez", "button_label": "Shop now", "link": "shopify://collections/all" } }
+        "b1": {
+          "type": "banner",
+          "settings": {
+            "link": "shopify://collections/all",
+            "heading": "Conjuntos",
+            "button_label": "Shop now",
+            "text_color": "#ffffff"
+          }
+        },
+        "b2": {
+          "type": "banner",
+          "settings": {
+            "link": "shopify://collections/all",
+            "heading": "Fluidez",
+            "button_label": "Shop now",
+            "text_color": "#ffffff"
+          }
+        }
       },
-      "block_order": ["b1", "b2"],
+      "block_order": [
+        "b1",
+        "b2"
+      ],
       "settings": {
+        "heading": "",
         "columns": 2,
         "ratio": "portrait",
         "text_position": "inside",
         "full_width": true,
+        "mobile_scroll": false,
         "gap": 4,
         "margin_top": 0,
         "margin_bottom": 4
@@ -84,25 +133,74 @@
     "banner_texturas": {
       "type": "image-banner",
       "settings": {
-        "heading": "Texturas",
-        "button_label": "SHOP NOW",
+        "video_url": "",
+        "video_url_mobile": "",
         "link": "shopify://collections/all",
-        "position": "middle-left",
         "width": "full",
         "margin_top": 0,
-        "margin_bottom": 0
+        "margin_bottom": 0,
+        "subheading": "",
+        "heading": "Texturas",
+        "text": "",
+        "button_label": "SHOP NOW",
+        "button_style": "outline-light",
+        "text_color": "#ffffff",
+        "position": "middle-left",
+        "position_mobile": "bottom",
+        "alignment": "center"
       }
     },
     "categories": {
       "type": "collection-list",
       "blocks": {
-        "c1": { "type": "collection", "settings": { "title": "Vestidos" } },
-        "c2": { "type": "collection", "settings": { "title": "Blusas" } },
-        "c3": { "type": "collection", "settings": { "title": "Calças" } },
-        "c4": { "type": "collection", "settings": { "title": "Jaquetas" } },
-        "c5": { "type": "collection", "settings": { "title": "Acessórios" } }
+        "c1": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Vestidos",
+            "link": ""
+          }
+        },
+        "c2": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Blusas",
+            "link": ""
+          }
+        },
+        "c3": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Calças",
+            "link": ""
+          }
+        },
+        "c4": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Jaquetas",
+            "link": ""
+          }
+        },
+        "c5": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Acessórios",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["c1", "c2", "c3", "c4", "c5"],
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
       "settings": {
         "heading": "Compre por categoria",
         "style": "tiles",
@@ -115,8 +213,10 @@
       "type": "featured-collection",
       "settings": {
         "heading": "Mais desejados",
-        "layout": "carousel",
+        "text": "",
+        "collection": "",
         "limit": 12,
+        "layout": "carousel",
         "columns": 4,
         "show_view_all": true,
         "margin_top": 24,
@@ -126,15 +226,27 @@
     "story": {
       "type": "image-with-text",
       "settings": {
+        "image_right": false,
         "subheading": "Nossa essência",
         "heading": "Moda que atravessa o tempo",
+        "text": "<p>Peças pensadas para atravessar estações, com matérias-primas nobres e acabamento impecável.</p>",
         "button_label": "Conheça",
+        "link": "",
         "alignment": "left",
-        "background": "#F5F3F1",
+        "background": "#f5f3f1",
         "margin_top": 0,
         "margin_bottom": 20
       }
     }
   },
-  "order": ["hero", "shelf_new", "banner_main", "duo", "banner_texturas", "categories", "shelf_best", "story"]
+  "order": [
+    "hero",
+    "shelf_new",
+    "banner_main",
+    "duo",
+    "banner_texturas",
+    "categories",
+    "shelf_best",
+    "story"
+  ]
 }
