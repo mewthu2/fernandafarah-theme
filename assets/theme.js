@@ -94,11 +94,51 @@
       window.addEventListener('scroll', onScroll, { passive: true });
     }
 
-    $$('[data-nav-item]', header).forEach((item) => {
-      const link = $('.nav__link[aria-haspopup]', item);
-      if (!link) return;
-      item.addEventListener('mouseenter', () => link.setAttribute('aria-expanded', 'true'));
-      item.addEventListener('mouseleave', () => link.setAttribute('aria-expanded', 'false'));
+    const nav = $('.nav', header);
+    const items = $$('[data-nav-item]', header);
+    let current = null;
+    let openTimer = null;
+    let closeTimer = null;
+
+    const setOpen = (item) => {
+      if (current === item) return;
+      const switching = current && item;
+      nav?.classList.toggle('is-switching', Boolean(switching));
+      if (current) {
+        current.classList.remove('is-open');
+        $('.nav__link', current)?.setAttribute('aria-expanded', 'false');
+      }
+      current = item;
+      if (item) {
+        item.classList.add('is-open');
+        $('.nav__link', item)?.setAttribute('aria-expanded', 'true');
+      }
+      if (switching) requestAnimationFrame(() => requestAnimationFrame(() => nav?.classList.remove('is-switching')));
+    };
+
+    items.forEach((item) => {
+      const hasPanel = item.classList.contains('nav__item--has-panel');
+      item.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimer);
+        clearTimeout(openTimer);
+        if (!hasPanel) {
+          openTimer = setTimeout(() => setOpen(null), current ? 120 : 0);
+          return;
+        }
+        openTimer = setTimeout(() => setOpen(item), current ? 60 : 110);
+      });
+      item.addEventListener('mouseleave', () => {
+        clearTimeout(openTimer);
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => setOpen(null), 300);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(null);
+    });
+    document.addEventListener('click', (e) => {
+      if (current && !current.contains(e.target)) setOpen(null);
     });
   };
 
@@ -778,7 +818,7 @@
         controller?.abort();
         controller = new AbortController();
         try {
-          const url = `${theme.routes.predictiveSearch}?q=${encodeURIComponent(q)}&resources[type]=product,collection,query&resources[limit]=4&section_id=predictive-search`;
+          const url = `${theme.routes.predictiveSearch}?q=${encodeURIComponent(q)}&resources[type]=product,collection,query&resources[limit]=6&section_id=predictive-search`;
           const res = await fetch(url, { signal: controller.signal });
           const doc = parseHTML(await res.text());
           const content = $('.predictive', doc);

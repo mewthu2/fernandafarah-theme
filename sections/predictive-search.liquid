@@ -1,6 +1,12 @@
 {%- if predictive_search.performed -%}
-  <div class="predictive">
-    {%- if predictive_search.resources.queries.size > 0 or predictive_search.resources.collections.size > 0 -%}
+  {%- liquid
+    assign has_side = false
+    if predictive_search.resources.queries.size > 0 or predictive_search.resources.collections.size > 0
+      assign has_side = true
+    endif
+  -%}
+  <div class="predictive{% if has_side %} predictive--with-side{% endif %}">
+    {%- if has_side -%}
       <div class="predictive__side">
         {%- if predictive_search.resources.queries.size > 0 -%}
           <p class="predictive__heading">{{ 'search.suggestions' | t }}</p>
@@ -25,7 +31,7 @@
       {%- if predictive_search.resources.products.size > 0 -%}
         <p class="predictive__heading">{{ 'search.products' | t }}</p>
         <div class="predictive__grid">
-          {%- for product in predictive_search.resources.products limit: 4 -%}
+          {%- for product in predictive_search.resources.products limit: 6 -%}
             {% render 'product-card', product: product, sizes: '(min-width: 990px) 15vw, 50vw' %}
           {%- endfor -%}
         </div>
