@@ -3,6 +3,29 @@
   assign color_names = settings.card_color_option_name | downcase | split: ','
   assign featured_media_id = current_variant.featured_media.id | default: product.featured_media.id
   assign guide_shown = false
+
+  assign video_value = nil
+  assign video_url = nil
+  assign video_mf_parts = section.settings.video_metafield | strip | split: '.'
+  if video_mf_parts.size == 2
+    assign video_mf = product.metafields[video_mf_parts[0]][video_mf_parts[1]]
+    if video_mf != blank
+      if video_mf.type contains 'list.'
+        assign video_value = video_mf.value | first
+      else
+        assign video_value = video_mf.value
+      endif
+      if video_mf.type contains 'url' or video_mf.type contains 'text'
+        assign video_url = video_value | strip
+        assign video_value = nil
+      endif
+    endif
+  endif
+
+  assign has_video = false
+  if video_value != blank or video_url != blank
+    assign has_video = true
+  endif
 -%}
 
 <section
@@ -13,9 +36,39 @@
 >
   <div class="product__gallery" data-gallery>
     <div class="product__media-list gallery--{{ section.settings.gallery_layout }}" data-media-list>
+      {%- if has_video -%}
+        <div class="product__media-item product__media-item--video is-active" data-media-video>
+          {%- liquid
+            assign poster = product.featured_media | image_url: width: 1200
+            assign video_url_down = video_url | downcase
+          -%}
+          {%- if video_value != blank -%}
+            {%- if video_value.media_type == 'video' or video_value.sources -%}
+              {{ video_value | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, class: 'product__img product__video', image_size: '1200x' }}
+            {%- elsif video_value.url -%}
+              <video class="product__img product__video" src="{{ video_value.url }}" autoplay muted loop playsinline preload="metadata" poster="{{ poster }}"></video>
+            {%- endif -%}
+          {%- elsif video_url_down contains 'youtube.com' or video_url_down contains 'youtu.be' -%}
+            {%- liquid
+              assign yt_id = video_url | split: 'v=' | last | split: '&' | first
+              if video_url_down contains 'youtu.be'
+                assign yt_id = video_url | split: 'youtu.be/' | last | split: '?' | first
+              elsif video_url_down contains '/shorts/'
+                assign yt_id = video_url | split: '/shorts/' | last | split: '?' | first
+              endif
+            -%}
+            <iframe class="product__img product__video" src="https://www.youtube.com/embed/{{ yt_id }}?autoplay=1&mute=1&loop=1&playlist={{ yt_id }}&controls=0&playsinline=1&rel=0" title="{{ product.title | escape }}" allow="autoplay; encrypted-media" loading="lazy"></iframe>
+          {%- elsif video_url_down contains 'vimeo.com' -%}
+            {%- assign vimeo_id = video_url | split: 'vimeo.com/' | last | split: '?' | first | split: '/' | last -%}
+            <iframe class="product__img product__video" src="https://player.vimeo.com/video/{{ vimeo_id }}?background=1&autoplay=1&muted=1&loop=1" title="{{ product.title | escape }}" allow="autoplay; fullscreen" loading="lazy"></iframe>
+          {%- else -%}
+            <video class="product__img product__video" src="{{ video_url }}" autoplay muted loop playsinline preload="metadata" poster="{{ poster }}"></video>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
       {%- for media in product.media -%}
         <div
-          class="product__media-item{% if media.id == featured_media_id %} is-active{% endif %}"
+          class="product__media-item{% if media.id == featured_media_id and has_video == false %} is-active{% endif %}"
           data-media-id="{{ media.id }}"
         >
           {%- case media.media_type -%}
@@ -50,9 +103,15 @@
         <div class="product__media-item">{{ 'product-apparel-1' | placeholder_svg_tag: 'product__img placeholder' }}</div>
       {%- endfor -%}
     </div>
-    {%- if product.media.size > 1 -%}
+    {%- liquid
+      assign dots_count = product.media.size
+      if has_video
+        assign dots_count = dots_count | plus: 1
+      endif
+    -%}
+    {%- if dots_count > 1 -%}
       <div class="product__dots" aria-hidden="true">
-        {%- for media in product.media -%}
+        {%- for i in (1..dots_count) -%}
           <span class="product__dot{% if forloop.first %} is-active{% endif %}"></span>
         {%- endfor -%}
       </div>
@@ -252,6 +311,13 @@
         { "value": "stack", "label": "Uma coluna" }
       ],
       "default": "grid"
+    },
+    {
+      "type": "text",
+      "id": "video_metafield",
+      "label": "Metacampo de vídeo",
+      "info": "Formato namespace.chave. O vídeo aparece como primeira mídia da galeria. Aceita arquivo de vídeo, lista de arquivos ou URL (MP4, YouTube, Vimeo).",
+      "default": "custom.video"
     }
   ],
   "blocks": [

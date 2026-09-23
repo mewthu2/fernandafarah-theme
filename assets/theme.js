@@ -404,7 +404,12 @@
         const item = $(`[data-media-id="${mediaId}"]`, mediaList);
         if (!item) return;
         if (window.matchMedia('(min-width: 990px)').matches) {
-          if (item !== mediaList.firstElementChild) mediaList.prepend(item);
+          const video = $('[data-media-video]', mediaList);
+          if (video) {
+            if (video.nextElementSibling !== item) video.after(item);
+          } else if (item !== mediaList.firstElementChild) {
+            mediaList.prepend(item);
+          }
         } else {
           mediaList.scrollTo({ left: item.offsetLeft, behavior: 'smooth' });
         }

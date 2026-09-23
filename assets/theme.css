@@ -2599,6 +2599,12 @@ input:checked + .swatch::after {
   object-fit: cover;
 }
 
+.product__video {
+  border: 0;
+  background: #000;
+  pointer-events: none;
+}
+
 .product__zoom {
   display: block;
   width: 100%;
