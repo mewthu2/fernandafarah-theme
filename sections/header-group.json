@@ -52,6 +52,20 @@
     },
     "header": {
       "type": "header",
+      "blocks": {
+        "promo_4iKgMz": {
+          "type": "promo",
+          "settings": {
+            "menu_item": "ROUPAS",
+            "image": "shopify://shop_images/IMG_8335_b6e3b193-0cdc-4296-ae5b-bfe3df98341a.jpg",
+            "caption": "Novidades",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "promo_4iKgMz"
+      ],
       "settings": {
         "menu": "main-menu",
         "utility_menu": "",
