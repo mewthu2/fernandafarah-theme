@@ -33,6 +33,8 @@
         "slide2": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/DESK_-_Moletom.png",
+            "image_mobile": "shopify://shop_images/MOB_-_Moletom.png",
             "video_url": "",
             "video_url_mobile": "",
             "subheading": "Até 50% OFF",
