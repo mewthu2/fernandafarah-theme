@@ -57,9 +57,22 @@
           "type": "promo",
           "settings": {
             "menu_item": "ROUPAS",
+            "column_title": "Categorias",
+            "extra_menu": "",
+            "extra_menu_title": "",
+            "extra_menu_2": "",
+            "extra_menu_2_title": "",
+            "promo_type": "products",
             "image": "shopify://shop_images/IMG_8335_b6e3b193-0cdc-4296-ae5b-bfe3df98341a.jpg",
             "caption": "Novidades",
-            "link": ""
+            "button_label": "Shop now",
+            "link": "",
+            "caption_2": "",
+            "button_label_2": "Shop now",
+            "link_2": "",
+            "collection": "",
+            "products_title": "Mais desejados",
+            "products_count": 3
           }
         }
       },
