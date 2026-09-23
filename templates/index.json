@@ -77,16 +77,17 @@
     "banner_main": {
       "type": "image-banner",
       "settings": {
+        "image": "shopify://shop_images/DESK_-_Segunda_pele.png",
         "video_url": "",
         "video_url_mobile": "",
         "link": "shopify://collections/all",
-        "width": "full",
+        "width": "boxed",
         "margin_top": 0,
         "margin_bottom": 4,
         "subheading": "",
         "heading": "Detalhes",
         "text": "",
-        "button_label": "SHOP NOW",
+        "button_label": "",
         "button_style": "outline-light",
         "text_color": "#ffffff",
         "position": "bottom-center",
@@ -100,6 +101,7 @@
         "b1": {
           "type": "banner",
           "settings": {
+            "image": "shopify://shop_images/IMG_8626.jpg",
             "link": "shopify://collections/all",
             "heading": "Conjuntos",
             "button_label": "Shop now",
@@ -109,6 +111,7 @@
         "b2": {
           "type": "banner",
           "settings": {
+            "image": "shopify://shop_images/IMG_8197.jpg",
             "link": "shopify://collections/all",
             "heading": "Fluidez",
             "button_label": "Shop now",
@@ -125,7 +128,7 @@
         "columns": 2,
         "ratio": "portrait",
         "text_position": "inside",
-        "full_width": true,
+        "full_width": false,
         "mobile_scroll": false,
         "gap": 4,
         "margin_top": 0,
@@ -135,10 +138,11 @@
     "banner_texturas": {
       "type": "image-banner",
       "settings": {
+        "image": "shopify://shop_images/IMG_7745_3ee51fca-86a9-4e13-9bf0-d2682a10ac59.jpg",
         "video_url": "",
         "video_url_mobile": "",
         "link": "shopify://collections/all",
-        "width": "full",
+        "width": "boxed",
         "margin_top": 0,
         "margin_bottom": 0,
         "subheading": "",
@@ -158,7 +162,7 @@
         "c1": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "vestidos-1",
             "title": "Vestidos",
             "link": ""
           }
@@ -166,7 +170,7 @@
         "c2": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "blusas-2",
             "title": "Blusas",
             "link": ""
           }
@@ -174,7 +178,7 @@
         "c3": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "calca-jeans",
             "title": "Calças",
             "link": ""
           }
@@ -182,7 +186,7 @@
         "c4": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "jaquetas",
             "title": "Jaquetas",
             "link": ""
           }
@@ -190,7 +194,7 @@
         "c5": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "bandanas",
             "title": "Acessórios",
             "link": ""
           }
@@ -216,7 +220,7 @@
       "settings": {
         "heading": "Mais desejados",
         "text": "",
-        "collection": "",
+        "collection": "segunda-pele-em-renda",
         "limit": 12,
         "layout": "carousel",
         "columns": 4,
