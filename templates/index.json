@@ -85,7 +85,7 @@
         "margin_top": 0,
         "margin_bottom": 4,
         "subheading": "",
-        "heading": "Detalhes",
+        "heading": "",
         "text": "",
         "button_label": "",
         "button_style": "outline-light",
@@ -198,6 +198,14 @@
             "title": "Acessórios",
             "link": ""
           }
+        },
+        "collection_QQVfPe": {
+          "type": "collection",
+          "settings": {
+            "collection": "sale-1",
+            "title": "",
+            "link": ""
+          }
         }
       },
       "block_order": [
@@ -205,11 +213,12 @@
         "c2",
         "c3",
         "c4",
-        "c5"
+        "c5",
+        "collection_QQVfPe"
       ],
       "settings": {
         "heading": "Compre por categoria",
-        "style": "tiles",
+        "style": "circles",
         "columns": 5,
         "margin_top": 56,
         "margin_bottom": 40
@@ -220,7 +229,7 @@
       "settings": {
         "heading": "Mais desejados",
         "text": "",
-        "collection": "segunda-pele-em-renda",
+        "collection": "jaquetas",
         "limit": 12,
         "layout": "carousel",
         "columns": 4,
