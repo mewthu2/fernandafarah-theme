@@ -9,7 +9,8 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/newloho.png",
+    "logo": "shopify://shop_images/ChatGPT_Image_23_de_set._de_2026_14_26_53.png",
+    "logo_inverse": "shopify://shop_images/ChatGPT_Image_23_de_set._de_2026_14_27_02.png",
     "logo_width": 180,
     "sections": {
       "cart-drawer": {
