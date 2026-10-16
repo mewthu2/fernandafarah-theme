@@ -162,7 +162,7 @@
     </h3>
     {% render 'price', product: product, show_installments: true %}
 
-    {%- if settings.card_show_swatches and color_option and color_option.values.size > 1 -%}
+    {%- if settings.card_show_swatches and color_option and color_option.values.size > 0 -%}
       <ul class="card__swatches" aria-label="{{ color_option.name | escape }}">
         {%- for value in color_option.values limit: 6 -%}
           {%- liquid
