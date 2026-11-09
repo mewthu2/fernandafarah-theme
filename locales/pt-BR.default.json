@@ -86,7 +86,11 @@
     },
     "look": {
       "title": "Compre o look",
-      "see_look": "Ver o look completo"
+      "see_look": "Ver o look completo",
+      "pieces": {
+        "one": "{{ count }} peça",
+        "other": "{{ count }} peças"
+      }
     }
   },
   "collections": {

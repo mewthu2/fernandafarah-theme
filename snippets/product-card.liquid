@@ -4,6 +4,7 @@
   @param {product} product - The product
   @param {string} [sizes] - Image sizes attribute
   @param {boolean} [lazy] - Lazy load image, defaults to true
+  @param {boolean} [quick_inline] - Show quick add sizes below the info, always visible
 
   @example
   {% render 'product-card', product: product %}
@@ -53,6 +54,10 @@
     endfor
   endif
   assign card_url = product.url
+  assign show_quick = false
+  if product.available and settings.card_show_quick_add or product.available and quick_inline
+    assign show_quick = true
+  endif
 
   assign card_video_url = ''
   if settings.card_show_video
@@ -62,6 +67,44 @@
     assign card_video_url = card_video_url | strip
   endif
 -%}
+
+{%- capture quick_add -%}
+      <div class="card__quick{% if quick_inline %} card__quick--inline{% endif %}">
+        {%- if product.has_only_default_variant -%}
+          <button type="button" class="card__quick-btn card__quick-btn--full" data-quick-add="{{ first_variant.id }}">
+            {{ 'products.product.add_to_cart' | t }}
+          </button>
+        {%- elsif size_option -%}
+          <span class="card__quick-label">{{ 'products.product.quick_add' | t }}</span>
+          <div class="card__quick-sizes">
+            {%- for variant in product.variants -%}
+              {%- liquid
+                assign show = true
+                if color_option
+                  assign v_color = variant.options[color_index]
+                  assign f_color = first_variant.options[color_index]
+                  if v_color != f_color
+                    assign show = false
+                  endif
+                endif
+              -%}
+              {%- if show -%}
+                <button
+                  type="button"
+                  class="card__quick-btn"
+                  data-quick-add="{{ variant.id }}"
+                  {% unless variant.available %}
+                    disabled
+                  {% endunless %}
+                >
+                  {{ variant.options[size_index] }}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+{%- endcapture -%}
 
 <article class="card" data-product-card>
   <div class="card__media">
@@ -117,43 +160,7 @@
       {%- endif -%}
     </div>
 
-    {%- if settings.card_show_quick_add and product.available -%}
-      <div class="card__quick">
-        {%- if product.has_only_default_variant -%}
-          <button type="button" class="card__quick-btn card__quick-btn--full" data-quick-add="{{ first_variant.id }}">
-            {{ 'products.product.add_to_cart' | t }}
-          </button>
-        {%- elsif size_option -%}
-          <span class="card__quick-label">{{ 'products.product.quick_add' | t }}</span>
-          <div class="card__quick-sizes">
-            {%- for variant in product.variants -%}
-              {%- liquid
-                assign show = true
-                if color_option
-                  assign v_color = variant.options[color_index]
-                  assign f_color = first_variant.options[color_index]
-                  if v_color != f_color
-                    assign show = false
-                  endif
-                endif
-              -%}
-              {%- if show -%}
-                <button
-                  type="button"
-                  class="card__quick-btn"
-                  data-quick-add="{{ variant.id }}"
-                  {% unless variant.available %}
-                    disabled
-                  {% endunless %}
-                >
-                  {{ variant.options[size_index] }}
-                </button>
-              {%- endif -%}
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
+    {%- if show_quick and quick_inline != true -%}{{ quick_add }}{%- endif -%}
   </div>
 
   <div class="card__info">
@@ -198,5 +205,7 @@
         {%- endif -%}
       </ul>
     {%- endif -%}
+
+    {%- if show_quick and quick_inline -%}{{ quick_add }}{%- endif -%}
   </div>
 </article>
