@@ -328,7 +328,7 @@
         "id": "free_shipping_threshold",
         "label": "Frete grátis a partir de (R$)",
         "info": "Deixe 0 para ocultar a barra de frete grátis.",
-        "default": 500
+        "default": 1800
       },
       {
         "type": "checkbox",

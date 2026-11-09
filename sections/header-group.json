@@ -33,7 +33,7 @@
         "msg3": {
           "type": "message",
           "settings": {
-            "text": "Frete grátis acima de R$ 500",
+            "text": "Frete grátis acima de R$ 1.800",
             "link_text": "",
             "link": ""
           }

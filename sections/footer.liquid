@@ -52,7 +52,33 @@
                 <summary class="footer__heading">{{ block.settings.title | default: block.settings.menu.title }} {% render 'icon', icon: 'chevron-down' %}</summary>
                 <ul role="list">
                   {%- for link in block.settings.menu.links -%}
-                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    <li>
+                      {%- if link.links.size > 0 -%}
+                        <details class="footer__sub">
+                          <summary class="footer__sub-toggle">{{ link.title }} {% render 'icon', icon: 'chevron-down' %}</summary>
+                          <ul class="footer__sub-list" role="list">
+                            {%- for child in link.links -%}
+                              <li>
+                                {%- if child.links.size > 0 -%}
+                                  <details class="footer__sub">
+                                    <summary class="footer__sub-toggle">{{ child.title }} {% render 'icon', icon: 'chevron-down' %}</summary>
+                                    <ul class="footer__sub-list" role="list">
+                                      {%- for grandchild in child.links -%}
+                                        <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                                      {%- endfor -%}
+                                    </ul>
+                                  </details>
+                                {%- else -%}
+                                  <a href="{{ child.url }}">{{ child.title }}</a>
+                                {%- endif -%}
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        </details>
+                      {%- else -%}
+                        <a href="{{ link.url }}">{{ link.title }}</a>
+                      {%- endif -%}
+                    </li>
                   {%- endfor -%}
                 </ul>
               </details>
