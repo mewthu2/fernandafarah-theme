@@ -288,9 +288,6 @@
             {%- if link_handles.size > 0 -%}
               <a href="#CompreOLook" class="look-link" {{ block.shopify_attributes }}>
                 <span class="look-link__thumbs">
-                  {%- if product.featured_media -%}
-                    {{ product.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '', class: 'look-link__thumb' }}
-                  {%- endif -%}
                   {%- for handle in link_handles limit: 3 -%}
                     {%- assign lp = all_products[handle] -%}
                     {%- if lp.featured_media -%}
@@ -300,7 +297,7 @@
                 </span>
                 <span class="look-link__text">
                   <b>{{ block.settings.title }}</b>
-                  <small>{{ 'products.look.see_look' | t }} ({{ link_handles.size | plus: 1 }})</small>
+                  <small>{{ 'products.look.see_look' | t }} ({{ link_handles.size }})</small>
                 </span>
                 {% render 'icon', icon: 'arrow-right' %}
               </a>

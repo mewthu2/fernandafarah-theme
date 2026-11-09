@@ -96,6 +96,27 @@
 
     const nav = $('.nav', header);
     const items = $$('[data-nav-item]', header);
+
+    /* Desktop nav: keep on one line, move overflowing items into "Mais" */
+    const moreItem = $('[data-nav-more]', header);
+    if (nav && moreItem) {
+      const mainItems = items.filter((it) => it !== moreItem);
+      const moreEntries = $$('[data-nav-more-index]', moreItem);
+      const fitNav = () => {
+        mainItems.forEach((it) => { it.hidden = false; });
+        moreEntries.forEach((e) => { e.hidden = true; });
+        moreItem.hidden = true;
+        if (!nav.offsetParent || nav.scrollWidth <= nav.clientWidth) return;
+        moreItem.hidden = false;
+        for (let i = mainItems.length - 1; i >= 0 && nav.scrollWidth > nav.clientWidth; i--) {
+          mainItems[i].hidden = true;
+          moreEntries[i].hidden = false;
+        }
+      };
+      fitNav();
+      window.addEventListener('resize', debounce(fitNav, 100));
+      document.fonts?.ready.then(fitNav);
+    }
     let current = null;
     let openTimer = null;
     let closeTimer = null;
@@ -608,8 +629,22 @@
       });
     });
 
+    /* Keep WhatsApp above the fullscreen video: lift it into the top layer after the dialog */
+    const whatsapp = $('.whatsapp-float');
+    const liftWhatsapp = (on) => {
+      if (!whatsapp || typeof whatsapp.showPopover !== 'function') return;
+      if (on) {
+        whatsapp.setAttribute('popover', 'manual');
+        whatsapp.showPopover();
+      } else if (whatsapp.hasAttribute('popover')) {
+        if (whatsapp.matches(':popover-open')) whatsapp.hidePopover();
+        whatsapp.removeAttribute('popover');
+      }
+    };
+
     const open = () => {
       dialog.showModal();
+      liftWhatsapp(true);
       document.body.classList.add('is-locked');
       $('.vstories__bubble-video', wrap)?.pause();
       go(0);
@@ -621,6 +656,7 @@
     };
 
     dialog.addEventListener('close', () => {
+      liftWhatsapp(false);
       videos.forEach((v) => v.pause());
       document.body.classList.remove('is-locked');
       $('.vstories__bubble-video', wrap)?.play().catch(() => {});
@@ -690,100 +726,6 @@
         case 'amount_with_apostrophe_separator': return fmt(2, "'", '.');
         default: return fmt(2, ',', '.');
       }
-    });
-  };
-
-  /* Shop the look */
-  const initLook = (root = document) => {
-    $$('[data-look]', root).forEach((look) => {
-      if (look._init) return;
-      look._init = true;
-      const items = $$('[data-look-item]', look);
-
-      items.forEach((item) => {
-        const variants = JSON.parse($('[data-look-variants]', item)?.textContent || '[]');
-        const sets = $$('[data-look-option]', item);
-        const btn = $('[data-look-add]', item);
-
-        const refresh = () => {
-          const selected = sets.map((fs) => $('input:checked', fs)?.value);
-          sets.forEach((fs, i) => {
-            $$('input', fs).forEach((input) => {
-              const possible = variants.some(
-                (v) => v.available && v.options[i] === input.value && v.options.every((o, n) => n === i || !selected[n] || o === selected[n])
-              );
-              $(`label[for="${CSS.escape(input.id)}"]`, fs)?.classList.toggle('is-unavailable', !possible);
-            });
-          });
-          item.classList.remove('is-missing');
-          if (selected.some((v) => v === undefined)) return;
-          const variant = variants.find((v) => v.options.every((o, i) => o === selected[i]));
-          if (!variant) {
-            btn.removeAttribute('data-variant-id');
-            btn.disabled = true;
-            btn.textContent = theme.strings.unavailable;
-            return;
-          }
-          btn.dataset.variantId = variant.id;
-          btn.disabled = !variant.available;
-          btn.textContent = variant.available ? theme.strings.addToCart : theme.strings.soldOut;
-          const price = $('[data-look-price] .price', item);
-          if (price) {
-            const current = $('.price__current', price);
-            if (current) current.textContent = formatMoney(variant.price);
-            const onSale = variant.compare_at_price > variant.price;
-            price.classList.toggle('price--sale', onSale);
-            let compare = $('.price__compare', price);
-            if (onSale) {
-              if (!compare) {
-                compare = document.createElement('s');
-                compare.className = 'price__compare';
-                $('.price__main', price)?.prepend(compare);
-              }
-              compare.textContent = formatMoney(variant.compare_at_price);
-            } else {
-              compare?.remove();
-              $('.price__off', price)?.remove();
-            }
-          }
-        };
-
-        sets.forEach((fs) => fs.addEventListener('change', refresh));
-        if (sets.length) refresh();
-
-        btn?.addEventListener('click', async () => {
-          if (!btn.dataset.variantId) {
-            item.classList.add('is-missing');
-            return;
-          }
-          const label = btn.textContent;
-          const ok = await addToCart([{ id: parseInt(btn.dataset.variantId, 10), quantity: 1 }], btn);
-          if (ok) {
-            btn.textContent = theme.strings.added;
-            setTimeout(() => (btn.textContent = label), 2000);
-          }
-        });
-      });
-
-      $('[data-look-add-all]', look)?.addEventListener('click', async (e) => {
-        const button = e.currentTarget;
-        const hint = $('[data-look-hint]', look);
-        const buttons = items.map((item) => $('[data-look-add]', item)).filter((b) => b && !b.disabled);
-        const missing = items.filter((item) => {
-          const b = $('[data-look-add]', item);
-          return b && !b.disabled && !b.dataset.variantId;
-        });
-        if (missing.length) {
-          missing.forEach((item) => item.classList.add('is-missing'));
-          if (hint) hint.hidden = false;
-          missing[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-          return;
-        }
-        if (hint) hint.hidden = true;
-        const lineItems = buttons.map((b) => ({ id: parseInt(b.dataset.variantId, 10), quantity: 1 }));
-        if (!lineItems.length) return;
-        await addToCart(lineItems, button);
-      });
     });
   };
 
@@ -939,7 +881,6 @@
 
   const init = (root = document) => {
     initCardVideos(root);
-    initLook(root);
     initAnnouncement(root);
     initCountdown(root);
     initSlideshows(root);

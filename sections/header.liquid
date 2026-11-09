@@ -96,6 +96,27 @@
             {%- endif -%}
           </li>
         {%- endfor -%}
+        <li class="nav__item nav__item--more nav__item--has-panel" data-nav-item data-nav-more hidden>
+          <button type="button" class="nav__link" aria-haspopup="true" aria-expanded="false">
+            {{- 'header.more' | t -}}
+          </button>
+          <div class="nav-more">
+            <ul class="nav-more__list" role="list">
+              {%- for link in menu.links -%}
+                <li class="nav-more__item" data-nav-more-index="{{ forloop.index0 }}" hidden>
+                  <a href="{{ link.url }}" class="nav-more__link{% if link.active or link.child_active %} is-active{% endif %}">{{ link.title }}</a>
+                  {%- if link.links.size > 0 -%}
+                    <ul class="nav-more__sub" role="list">
+                      {%- for child in link.links -%}
+                        <li><a href="{{ child.url }}" class="nav-more__sublink">{{ child.title }}</a></li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        </li>
       </ul>
     </nav>
 

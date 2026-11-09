@@ -38,7 +38,8 @@
     "my_account": "Minha conta",
     "login": "Entrar / Cadastrar",
     "see_all": "Ver tudo",
-    "categories": "Categorias"
+    "categories": "Categorias",
+    "more": "Mais"
   },
   "footer": {
     "rights": "Todos os direitos reservados."
@@ -85,11 +86,6 @@
     },
     "look": {
       "title": "Compre o look",
-      "viewing": "Você está vendo",
-      "choose_size": "Selecione o tamanho",
-      "choose_all": "Selecione o tamanho de todas as peças",
-      "add_all": "Adicionar look completo",
-      "added_all": "Look adicionado à sacola",
       "see_look": "Ver o look completo"
     }
   },
